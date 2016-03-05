@@ -39,10 +39,10 @@ class Table {
 	// index of inner vectors would be indexed by every node in the system
 	// initialize the table such that every vector<double> is length 0
 	// initialize rows such that every distance is -1 to represent infinity
-	std::vector<std::vector<double>> routingTable;
+	std::vector< std::vector<double> > routingTable;
 	
  public:
-	Table(unsigned pN, unsigned nN, std::vector<std::vector<double>> rT);
+	Table(unsigned pN, unsigned nN, std::vector< std::vector<double> > rT);
 	Table(unsigned pN, unsigned nN);
 	Table();
 	Table(const Table &rhs);
