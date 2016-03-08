@@ -62,6 +62,8 @@ class Table {
 	virtual unsigned GetParentNode() const;
 	virtual void SetNumNeighbors(unsigned number);
 	virtual unsigned GetNumNeighbors() const;
+	virtual void SetRoutingTable(map<unsigned, map<unsigned, double> > table);
+	virtual map<unsigned, map<unsigned, double> > GetRoutingTable() const;
 	virtual void SetRow(unsigned neighborId, map<unsigned, double> row);
 	virtual map<unsigned, double> GetRow(unsigned neighborId) const;
 	virtual void SetEntry(unsigned neighborId, unsigned destId, double distance);

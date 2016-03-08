@@ -99,6 +99,10 @@ ostream & Table::Print(ostream &os) const
 	unsigned Table::GetParentNode() const {return parentNode;}
 	void Table::SetNumNeighbors(unsigned number) { numNeighbors = number; }
 	unsigned Table::GetNumNeighbors() const {return numNeighbors;}
+	void Table::SetRoutingTable(map<unsigned, map<unsigned, double> > table) {
+		routingTable = table;
+	}
+	map<unsigned, map<unsigned, double> > Table::GetRoutingTable() const { return routingTable; }
 	void Table::SetRow(unsigned neighborId, map<unsigned, double> row) 
 	{
 		routingTable[neighborId] = row;
