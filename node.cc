@@ -174,7 +174,7 @@ bool Node::Matches(const Node &rhs) const
     map<unsigned, map<unsigned, double> >::iterator tableIt = table.begin();
     Node returnNode = *this;
     unsigned destId = destination->GetNumber();
-    deque<Link*> links = *GetOutgoingLinks();
+    deque<Link*> links = *Topology::GetOutgoingLinks();
     double minDist = table.GetEntry(number, destId);
     unsigned linksSize = links.size();
 
