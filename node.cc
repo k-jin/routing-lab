@@ -154,6 +154,14 @@ bool Node::Matches(const Node &rhs) const
     // update our table
     // send out routing mesages
     cerr << *this<<": Link Update: "<<*l<<endl;
+    Table *table = GetRoutingTable();
+    map<unsigned, map<unsigned, double> > forwardingTable = *table.GetForwardingTable();
+    map<unsigned, map<unsigned, double> >::iterator tableIt = forwardingTable.begin();
+    Link newLink = *link;
+    unsigned destId = newLink.GetDest();
+    double newLat = newLink.GetLatency();
+
+
   }
 
 

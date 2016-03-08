@@ -38,7 +38,7 @@ ostream &RoutingMessage::Print(ostream &os) const
 RoutingMessage::RoutingMessage()
 {}
 
-RoutingMessage::RoutingMessage(map<unsigned, double> b) body(b) {}
+RoutingMessage::RoutingMessage(map<unsigned, double> b) : body(b) {}
 
 RoutingMessage::RoutingMessage(const RoutingMessage &rhs)
 {}
@@ -47,4 +47,3 @@ void RoutingMessage::SetBody(map<unsigned, double> b) { body = b; }
 map<unsigned, double> RoutingMessage::GetBody() const { return body; }
 
 #endif
-
