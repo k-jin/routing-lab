@@ -27,9 +27,9 @@ class Table {
 #if defined(DISTANCEVECTOR)
 
 #include <deque>
-#include <vector>
+#include <map>
 
-using namespace std
+//using namespace std;
 
 class Table {
 	// parent node of routing table
