@@ -2,9 +2,12 @@
 #define _messages
 
 #include <iostream>
+#include <map>
 
 #include "node.h"
 #include "link.h"
+
+using namespace std;
 
 #if defined(GENERIC)
 struct RoutingMessage {
@@ -27,10 +30,15 @@ struct RoutingMessage {
 #if defined(DISTANCEVECTOR)
 struct RoutingMessage {
 
+  map<unsigned, double> body;
+
   RoutingMessage();
+  RoutingMessage(map<unsigned, double> b);
   RoutingMessage(const RoutingMessage &rhs);
   RoutingMessage &operator=(const RoutingMessage &rhs);
 
+  void SetBody(map<unsigned, double> body);
+  map<unsigned, double> GetBody() const;
   ostream & Print(ostream &os) const;
 };
 #endif
