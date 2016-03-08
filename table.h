@@ -34,32 +34,37 @@ class Table {
 	unsigned parentNode;
 	// total number of nodes in the system
 	// also length of each internal vector<double>
-	unsigned numNodes;
-	// index of outer vector would be indexed by neighbors and self
-	// index of inner vectors would be indexed by every node in the system
-	// initialize the table such that every vector<double> is length 0
-	// initialize rows such that every distance is -1 to represent infinity
-	std::vector< std::vector<double> > routingTable;
+	//unsigned numNodes;
+	// TODO: probably don't need numNeighbors
+	// number of neighbors 
+	unsigned numNeighbors;
+	// index of outer vector is row index, where index is the node id
+	// deque is the row itself
+	// tuple<int, double> is the current shortest distance (double) to the node id (int)
+	std::map<unsigned, std::map<unsigned, double> > routingTable;
+	// std::vector< std::deque< std::tuple< int, double > > > routingTable;
 	
  public:
-	Table(unsigned pN, unsigned nN, std::vector< std::vector<double> > rT);
-	Table(unsigned pN, unsigned nN);
 	Table();
+	Table(unsigned pN);
+	Table(unsigned pN, unsigned nN);
+	Table(unsigned pN, std::map<unsigned, std::map<unsigned, double> > rT);
+	Table(unsigned pN, unsigned nN,	std::map<unsigned, std::map<unsigned, double> > rT);
 	Table(const Table &rhs);
 	Table & operator=(const Table &rhs);
 	virtual ~Table();
 	
-	virtual bool RowMatches(const std::vector<double> compare, const unsigned nodeNum) const;
+	// virtual bool RowMatches(const std::deque< std::tuple< int, double > > compare, const unsigned nodeId) const;
 	
 	ostream & Print(ostream &os) const;
-	virtual void SetParentNode(unsigned nodeNum);
+	virtual void SetParentNode(unsigned nodeId);
 	virtual unsigned GetParentNode() const;
-	virtual void SetNumNodes(unsigned number);
-	virtual unsigned GetNumNodes() const;
-	virtual void SetRow(unsigned neighborNum, std::vector<double> row);
-	virtual std::vector<double> GetRow(unsigned neighborNum) const;
-	virtual void SetEntry(unsigned neighborNum, unsigned destNum, double distance);
-	virtual double GetEntry(unsigned neighborNum, unsigned destNum) const;
+	virtual void SetNumNeighbors(unsigned number);
+	virtual unsigned GetNumNeighbors() const;
+	virtual void SetRow(unsigned neighborId, std::map<unsigned, double> row);
+	virtual std::map<unsigned, double> GetRow(unsigned neighborId) const;
+	virtual void SetEntry(unsigned neighborId, unsigned destId, double distance);
+	virtual double GetEntry(unsigned neighborId, unsigned destId) const;
 };
 #endif
 
