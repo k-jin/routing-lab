@@ -1,6 +1,7 @@
 #include "node.h"
 #include "context.h"
 #include "error.h"
+#include "topology.h"
 
 
 Node::Node(const unsigned n, SimulationContext *c, double b, double l) : 
@@ -169,10 +170,10 @@ bool Node::Matches(const Node &rhs) const
 
   Node *Node::GetNextHop(const Node *destination) const
   {
-    map<unsigned, map<unsigned, double> > table = GetRoutingTable().GetForwardingTable();
+    map<unsigned, map<unsigned, double> > table = GetRoutingTable()->GetForwardingTable();
     map<unsigned, map<unsigned, double> >::iterator tableIt = table.begin();
     Node returnNode = *this;
-    unsigned destId = destination.GetNumber();
+    unsigned destId = destination->GetNumber();
     deque<Link*> links = *GetOutgoingLinks();
     double minDist = table.GetEntry(number, destId);
     unsigned linksSize = links.size();
@@ -212,7 +213,7 @@ bool Node::Matches(const Node &rhs) const
 
   Table *Node::GetRoutingTable() const
   {
-    return routingTable;
+    return &routingTable;
   }
 
 
