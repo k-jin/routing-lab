@@ -170,25 +170,26 @@ bool Node::Matches(const Node &rhs) const
 
   Node *Node::GetNextHop(const Node *destination) const
   {
-    map<unsigned, map<unsigned, double> > table = GetRoutingTable()->GetForwardingTable();
-    map<unsigned, map<unsigned, double> >::iterator tableIt = table.begin();
-    Node returnNode = *this;
+    Table table = *GetRoutingTable();
+    map<unsigned, map<unsigned, double> > forwardingTable = table.GetForwardingTable();
+    map<unsigned, map<unsigned, double> >::iterator tableIt = forwardingTable.begin();
+    Node* returnNode = new Node(*this);
     unsigned destId = destination->GetNumber();
-    deque<Link*> links = *Topology::GetOutgoingLinks();
+    deque<Link*> links = *context->Topology::GetOutgoingLinks(returnNode);
     double minDist = table.GetEntry(number, destId);
     unsigned linksSize = links.size();
 
-    for(int i = 0; i < linksSize; i++) {
-      Link currLink = links[i];
+    for(unsigned i = 0; i < linksSize; i++) {
+      Link currLink = *links[i];
       if(currLink.GetDest() == destId) {
         if(minDist == currLink.GetLatency()) {
-          returnNode.SetNumber(destId);
+          returnNode->SetNumber(destId);
           return returnNode;
         }
       }
     }
 
-    for(; tableIt != table.end(); ++tableIt) {
+    for(; tableIt != forwardingTable.end(); ++tableIt) {
       unsigned currNeighbor = tableIt->first;
       map<unsigned, double> currRow = tableIt->second;
       map<unsigned, double>::iterator rowIt = currRow.begin();
@@ -196,24 +197,24 @@ bool Node::Matches(const Node &rhs) const
         unsigned currDest = rowIt->first;
         double currDistance = rowIt->second;
         if (currDest == destId) {
-          double neighborDist = table.GetEntry(returnNode.GetNumber(), destId);
+          double neighborDist = table.GetEntry(returnNode->GetNumber(), destId);
           double totalDist = neighborDist + currDistance;
           if (totalDist == minDist) {
-            returnNode.SetNumber(currDest);
+            returnNode->SetNumber(currDest);
             return returnNode;
           }
         }
       }
     }
     cerr << *this << "couldn't GetNextHop" << endl;
-    return -1;
+    return new Node();
 
     
   }
 
   Table *Node::GetRoutingTable() const
   {
-    return &routingTable;
+    return new Table(routingTable);
   }
 
 
