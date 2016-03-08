@@ -13,30 +13,20 @@ ostream & Table::Print(ostream &os) const
 
 #endif
 
-//TODO: probably don't need numNeighbors
 #if defined(DISTANCEVECTOR)
 	
-	Table::Table(unsigned pN, unsigned nN, map<unsigned, map<unsigned, double> > rT) : 
-		parentNode(pN), numNeighbors(nN), routingTable(rT) {}
+	Table::Table(unsigned pN, map<unsigned, map<unsigned, double> > rT) : 
+		parentNode(pN), routingTable(rT) {}
 		
 	Table::Table(unsigned pN) : 
-		parentNode(pN), numNeighbors(0)
-		{}
-
-	Table::Table(unsigned pN, unsigned nN) : 
-		parentNode(pN), numNeighbors(nN)
-		{}
-
-	Table::Table(unsigned pN, map<unsigned, map<unsigned, double> > rT) : 
-		parentNode(pN), numNeighbors(rT.size()), routingTable(rT) {}
-	
+		parentNode(pN) {}
 	Table::Table()
 	{
 		parentNode = -1;
 	}
 	
 	Table::Table(const Table &rhs) :
-		parentNode(rhs.parentNode), numNeighbors(rhs.numNeighbors), routingTable(rhs.routingTable) {}
+		parentNode(rhs.parentNode), routingTable(rhs.routingTable) {}
 		
 	Table & Table::operator=(const Table &rhs)
 	{
@@ -83,9 +73,7 @@ ostream & Table::Print(ostream &os) const
 	}
 	
 	void Table::SetParentNode(unsigned nodeId) { parentNode = nodeId; }
-	unsigned Table::GetParentNode() const {return parentNode;}
-	void Table::SetNumNeighbors(unsigned number) { numNeighbors = number; }
-	unsigned Table::GetNumNeighbors() const {return numNeighbors;}
+	unsigned Table::GetParentNode() const { return parentNode; }
 	void Table::SetRoutingTable(map<unsigned, map<unsigned, double> > table) {
 		routingTable = table;
 	}

@@ -33,24 +33,14 @@ class Table {
 class Table {
 	// parent node of routing table
 	unsigned parentNode;
-	// total number of nodes in the system
-	// also length of each internal vector<double>
-	//unsigned numNodes;
-	// TODO: probably don't need numNeighbors
-	// number of neighbors 
-	unsigned numNeighbors;
-	// index of outer vector is row index, where index is the node id
-	// deque is the row itself
-	// tuple<int, double> is the current shortest distance (double) to the node id (int)
+	// index of outer map is row index, where index is the node id (unsigned)
+	// index of inner map is the destination node (unsigned) and the value is the distance (double)
 	map<unsigned, map<unsigned, double> > routingTable;
-	// std::vector< std::deque< std::tuple< int, double > > > routingTable;
 	
  public:
 	Table();
 	Table(unsigned pN);
-	Table(unsigned pN, unsigned nN);
 	Table(unsigned pN, map<unsigned, map<unsigned, double> > rT);
-	Table(unsigned pN, unsigned nN,	map<unsigned, map<unsigned, double> > rT);
 	Table(const Table &rhs);
 	Table & operator=(const Table &rhs);
 	virtual ~Table();
@@ -60,8 +50,6 @@ class Table {
 	ostream & Print(ostream &os) const;
 	virtual void SetParentNode(unsigned nodeId);
 	virtual unsigned GetParentNode() const;
-	virtual void SetNumNeighbors(unsigned number);
-	virtual unsigned GetNumNeighbors() const;
 	virtual void SetRoutingTable(map<unsigned, map<unsigned, double> > table);
 	virtual map<unsigned, map<unsigned, double> > GetRoutingTable() const;
 	virtual void SetRow(unsigned neighborId, map<unsigned, double> row);
