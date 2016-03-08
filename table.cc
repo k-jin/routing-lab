@@ -11,6 +11,15 @@ ostream & Table::Print(ostream &os) const
 
 #if defined(LINKSTATE)
 
+ map<int , std::tuple<double, int> > Table::getRow(int rowNum){
+	 return lsTable[rowNum];
+ }
+ 
+ std::tuple<double, int> Table::getEntry(int entryNum){
+	 return lsTable[rowNum][entryNum];
+ }
+ 
+ 
 #endif
 
 #if defined(DISTANCEVECTOR)

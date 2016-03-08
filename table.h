@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <map>
 
 using namespace std;
 
@@ -12,6 +13,7 @@ class Table {
 
  public:
   ostream & Print(ostream &os) const;
+  
 };
 #endif
 
@@ -19,7 +21,23 @@ class Table {
 #if defined(LINKSTATE)
 class Table {
   // Students should write this class
+  // each node needs a list to measure distances and predecessorss from other nodes
+  //so there will be NxN table. size is static
+  // thable updated at every step
+  //entry tuple is < double cost, int predecessor>
  public:
+ 
+  Table();
+  Table(int numNodes);
+  map<int, map<int , std::tuple<double, int> > > lsTable;
+  
+  void updateRow(int rowNum);
+  void updateEntry(int entryNum);
+  map<int , std::tuple<double, int> >getRow(int rowNum);
+  std::tuple<double,int> getEntry(int entryNum);
+  
+  
+   
   ostream & Print(ostream &os) const;
 };
 #endif
@@ -56,6 +74,7 @@ class Table {
 	virtual unsigned GetParentNode() const;
 	virtual void SetNumNodes(unsigned number);
 	virtual unsigned GetNumNodes() const;
+	
 	virtual void SetRow(unsigned neighborNum, std::vector<double> row);
 	virtual std::vector<double> GetRow(unsigned neighborNum) const;
 	virtual void SetEntry(unsigned neighborNum, unsigned destNum, double distance);
