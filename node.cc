@@ -169,7 +169,7 @@ bool Node::Matches(const Node &rhs) const
 
   Node *Node::GetNextHop(const Node *destination) const
   {
-    map<unsigned, map<unsigned, double> > table = GetRoutingTable();
+    map<unsigned, map<unsigned, double> > table = GetRoutingTable().GetForwardingTable();
     map<unsigned, map<unsigned, double> >::iterator tableIt = table.begin();
     Node returnNode = *this;
     unsigned destId = destination.GetNumber();

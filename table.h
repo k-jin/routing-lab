@@ -31,16 +31,16 @@ class Table {
 
 
 class Table {
-	// parent node of routing table
+	// parent node of forwarding table
 	unsigned parentNode;
 	// index of outer map is row index, where index is the node id (unsigned)
 	// index of inner map is the destination node (unsigned) and the value is the distance (double)
-	map<unsigned, map<unsigned, double> > routingTable;
+	map<unsigned, map<unsigned, double> > forwardingTable;
 	
  public:
 	Table();
 	Table(unsigned pN);
-	Table(unsigned pN, map<unsigned, map<unsigned, double> > rT);
+	Table(unsigned pN, map<unsigned, map<unsigned, double> > fT);
 	Table(const Table &rhs);
 	Table & operator=(const Table &rhs);
 	virtual ~Table();
@@ -50,8 +50,8 @@ class Table {
 	ostream & Print(ostream &os) const;
 	virtual void SetParentNode(unsigned nodeId);
 	virtual unsigned GetParentNode() const;
-	virtual void SetRoutingTable(map<unsigned, map<unsigned, double> > table);
-	virtual map<unsigned, map<unsigned, double> > GetRoutingTable() const;
+	virtual void SetForwardingTable(map<unsigned, map<unsigned, double> > table);
+	virtual map<unsigned, map<unsigned, double> > GetForwardingTable() const;
 	virtual void SetRow(unsigned neighborId, map<unsigned, double> row);
 	virtual map<unsigned, double> GetRow(unsigned neighborId) const;
 	virtual void SetEntry(unsigned neighborId, unsigned destId, double distance);
