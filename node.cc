@@ -173,12 +173,20 @@ bool Node::Matches(const Node &rhs) const
     Table table = *GetRoutingTable();
     map<unsigned, map<unsigned, double> > forwardingTable = table.GetForwardingTable();
     map<unsigned, map<unsigned, double> >::iterator tableIt = forwardingTable.begin();
+    // initialized node to be returned, will be returned with next node in path
     Node* returnNode = new Node(*this);
+    // destination id of final node
     unsigned destId = destination->GetNumber();
+    // links are all outgoing links from current node
     deque<Link*> links = *context->Topology::GetOutgoingLinks(returnNode);
-    double minDist = table.GetEntry(number, destId);
+    // number of outgoing linkes
     unsigned linksSize = links.size();
+    // shortest distance to destination node
+    double minDist = table.GetEntry(number, destId);
 
+    // iterate through links to check for direct link to destination node
+    // if direct link exists, check if latency is equal to minDist
+          // if so, return returnNode with destId
     for(unsigned i = 0; i < linksSize; i++) {
       Link currLink = *links[i];
       if(currLink.GetDest() == destId) {
@@ -189,6 +197,10 @@ bool Node::Matches(const Node &rhs) const
       }
     }
 
+    // iterate through forwarding table 
+    // check if each neighbor has path to destination node
+      // if so, check to see if cost(path to neighbor) + cost(neighbor to dest) == minDist
+        // if so, return node with currNeighbor
     for(; tableIt != forwardingTable.end(); ++tableIt) {
       unsigned currNeighbor = tableIt->first;
       map<unsigned, double> currRow = tableIt->second;
@@ -200,13 +212,15 @@ bool Node::Matches(const Node &rhs) const
           double neighborDist = table.GetEntry(returnNode->GetNumber(), destId);
           double totalDist = neighborDist + currDistance;
           if (totalDist == minDist) {
-            returnNode->SetNumber(currDest);
+            returnNode->SetNumber(currNeighbor);
             return returnNode;
           }
         }
       }
     }
-    cerr << *this << "couldn't GetNextHop" << endl;
+
+    // error, the destination node can't be found in the routing table
+    cerr << *this << "couldn't GetNextHop, couldn''t find dest node in routing table" << endl;
     return new Node();
 
     
