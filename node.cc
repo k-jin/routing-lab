@@ -169,6 +169,24 @@ bool Node::Matches(const Node &rhs) const
 
   Node *Node::GetNextHop(const Node *destination) const
   {
+    Table table = GetRoutingTable();
+    Node returnNode = *this;
+    unsigned destId = destination.GetNumber();
+    deque<Link*> links = *GetOutgoingLinks();
+    double minDist = table.GetEntry(number, destId);
+    unsigned linksSize = links.size();
+
+    for(int i = 0; i < linksSize; i++) {
+      Link currLink = links[i];
+      if(currLink.GetDest() == destId) {
+        if(minDist == currLink.GetLatency()) {
+          returnNode.SetNumber(destId);
+          return returnNode;
+        }
+      }
+    }
+
+    
   }
 
   Table *Node::GetRoutingTable() const

@@ -29,7 +29,6 @@ class Table {
 #include <deque>
 #include <map>
 
-//using namespace std;
 
 class Table {
 	// parent node of routing table
