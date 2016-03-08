@@ -24,30 +24,18 @@ ostream & Table::Print(ostream &os) const
 
 #if defined(DISTANCEVECTOR)
 	
-	Table::Table(unsigned pN, unsigned nN, std::vector< std::vector<double> > rT) : 
-		parentNode(pN), numNodes(nN), routingTable(rT) {}
+	Table::Table(unsigned pN, map<unsigned, map<unsigned, double> > fT) : 
+		parentNode(pN), forwardingTable(fT) {}
 		
-	Table::Table(unsigned pN, unsigned nN) : 
-		parentNode(pN), numNodes(nN) 
-		{
-			std::vector<double> empty (0,0.0);
-			for (unsigned i = 0; i < numNodes; i++){
-				routingTable[i] = empty;
-			}
-		}
-	
+	Table::Table(unsigned pN) : 
+		parentNode(pN) {}
 	Table::Table()
 	{
-		numNodes = 0;
 		parentNode = -1;
-		std::vector<double> empty (0,0.0);
-		for (unsigned i = 0; i < numNodes; i++){
-			routingTable[i] = empty;
-		}
 	}
 	
 	Table::Table(const Table &rhs) :
-		parentNode(rhs.parentNode), numNodes(rhs.numNodes), routingTable(rhs.routingTable) {}
+		parentNode(rhs.parentNode), forwardingTable(rhs.forwardingTable) {}
 		
 	Table & Table::operator=(const Table &rhs)
 	{
@@ -58,62 +46,59 @@ ostream & Table::Print(ostream &os) const
 	{}
 	
 	
-	bool Table::RowMatches(const std::vector<double> compare, const unsigned nodeNum) const
-	{
-		if (compare.size() != numNodes) {
-			return false;
-		}
-		std::vector<double> tableRow = routingTable[nodeNum];
+	// bool Table::RowMatches(const std::deque< std::tuple< int, double > > compare, const unsigned nodeId) const
+	// {
+	// 	std::vector<double> tableRow = routingTable[nodeId];
+	// 	if (compare.size() != tableRow.size()) {
+	// 		return false;
+	// 	}
 		
-		for (unsigned i = 0; i < numNodes; i++) {
-			if (compare[i] != tableRow[i]) { return false; }
-		}
-		return true;
-	}
+	// 	for (unsigned i = 0; i < numNodes; i++) {
+	// 		if (compare[i] != tableRow[i]) { return false; }
+	// 	}
+	// 	return true;
+	// }
 	
 	ostream & Table::Print(ostream &os) const
 	{
 		os << "Routing Table for node " << parentNode << endl;
-		unsigned rtSize = routingTable.size();
-		
-		for(unsigned i = 0; i < rtSize; i++) {
-			std::vector<double> currRow = routingTable[i];
-			unsigned rowSize = currRow.size();
-			if (rowSize > 0) {
-				os << "Neighbor node " << i << "\t";
-				for(unsigned j = 0; j < rowSize; j++){
-					os << "Destination node: " << j << "/Distance: " << currRow[j] << "\t"; 
-				}
-				os << endl;
+		map<unsigned, map<unsigned, double> > table = GetForwardingTable();
+		map<unsigned, map<unsigned, double> >::iterator rowIt = table.begin();
+		for(; rowIt != table.end(); ++rowIt){
+			os << "Neighbor node: " << rowIt->first << "\t";
+			map<unsigned, double> currRow = rowIt->second;
+			map<unsigned, double>::iterator entryIt = currRow.begin();
+			for(; entryIt != currRow.end(); ++entryIt){
+				unsigned currDest = entryIt->first;
+				double currDist = entryIt->second;
+				os << "Destination node: " << currDest << "/Distance: " << currDist << "\t";
 			}
+			os << endl;
 		}
+		
+		
 		return os;
 		
 	}
 	
-	void Table::SetParentNode(unsigned nodeNum) { parentNode = nodeNum; }
-	unsigned Table::GetParentNode() const {return parentNode;}
-	void Table::SetNumNodes(unsigned number) { numNodes = number; }
-	unsigned Table::GetNumNodes() const { return numNodes; }
-	void Table::SetRow(unsigned neighborNum, std::vector<double> row) 
-	{
-		routingTable[neighborNum] = row;
+	void Table::SetParentNode(unsigned nodeId) { parentNode = nodeId; }
+	unsigned Table::GetParentNode() const { return parentNode; }
+	void Table::SetForwardingTable(map<unsigned, map<unsigned, double> > table) {
+		forwardingTable = table;
 	}
-	std::vector<double> Table::GetRow(unsigned neighborNum) const { return routingTable[neighborNum]; }
-	void Table::SetEntry(unsigned neighborNum, unsigned destNum, double distance)
+	map<unsigned, map<unsigned, double> > Table::GetForwardingTable() const { return forwardingTable; }
+	void Table::SetRow(unsigned neighborId, map<unsigned, double> row) 
 	{
-		if (routingTable[neighborNum].size() == 0) {
-			std::vector<double> newRow (numNodes, -1.0); 
-			routingTable[neighborNum] = newRow; 
-		}
-		routingTable[neighborNum][destNum] = distance;
+		forwardingTable[neighborId] = row;
 	}
-	double Table::GetEntry(unsigned neighborNum, unsigned destNum) const
+	map<unsigned, double> Table::GetRow(unsigned neighborId) const { return GetForwardingTable()[neighborId]; }
+	void Table::SetEntry(unsigned neighborId, unsigned destId, double distance)
 	{
-		if (routingTable[neighborNum].size() == 0) {
-			return -1.0;
-		}
-		return routingTable[neighborNum][destNum];
+		forwardingTable[neighborId][destId] = distance;
+	}
+	double Table::GetEntry(unsigned neighborId, unsigned destId) const
+	{
+		return GetForwardingTable()[neighborId][destId];
 	}
 		
 #endif

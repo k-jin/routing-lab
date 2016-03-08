@@ -45,40 +45,36 @@ class Table {
 #if defined(DISTANCEVECTOR)
 
 #include <deque>
-#include <vector>
+#include <map>
+
 
 class Table {
-	// parent node of routing table
+	// parent node of forwarding table
 	unsigned parentNode;
-	// total number of nodes in the system
-	// also length of each internal vector<double>
-	unsigned numNodes;
-	// index of outer vector would be indexed by neighbors and self
-	// index of inner vectors would be indexed by every node in the system
-	// initialize the table such that every vector<double> is length 0
-	// initialize rows such that every distance is -1 to represent infinity
-	std::vector< std::vector<double> > routingTable;
+	// index of outer map is row index, where index is the node id (unsigned)
+	// index of inner map is the destination node (unsigned) and the value is the distance (double)
+	map<unsigned, map<unsigned, double> > forwardingTable;
 	
  public:
-	Table(unsigned pN, unsigned nN, std::vector< std::vector<double> > rT);
-	Table(unsigned pN, unsigned nN);
 	Table();
+	Table(unsigned pN);
+	Table(unsigned pN, map<unsigned, map<unsigned, double> > fT);
 	Table(const Table &rhs);
 	Table & operator=(const Table &rhs);
 	virtual ~Table();
 	
-	virtual bool RowMatches(const std::vector<double> compare, const unsigned nodeNum) const;
+	// virtual bool RowMatches(const std::deque< std::tuple< int, double > > compare, const unsigned nodeId) const;
 	
 	ostream & Print(ostream &os) const;
-	virtual void SetParentNode(unsigned nodeNum);
+	virtual void SetParentNode(unsigned nodeId);
 	virtual unsigned GetParentNode() const;
-	virtual void SetNumNodes(unsigned number);
-	virtual unsigned GetNumNodes() const;
-	
-	virtual void SetRow(unsigned neighborNum, std::vector<double> row);
-	virtual std::vector<double> GetRow(unsigned neighborNum) const;
-	virtual void SetEntry(unsigned neighborNum, unsigned destNum, double distance);
-	virtual double GetEntry(unsigned neighborNum, unsigned destNum) const;
+
+	virtual void SetForwardingTable(map<unsigned, map<unsigned, double> > table);
+	virtual map<unsigned, map<unsigned, double> > GetForwardingTable() const;
+	virtual void SetRow(unsigned neighborId, map<unsigned, double> row);
+	virtual map<unsigned, double> GetRow(unsigned neighborId) const;
+	virtual void SetEntry(unsigned neighborId, unsigned destId, double distance);
+	virtual double GetEntry(unsigned neighborId, unsigned destId) const;
 };
 #endif
 

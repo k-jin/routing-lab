@@ -21,6 +21,7 @@ class Node {
   SimulationContext    *context;
   double   bw;
   double   lat;
+  Table routingTable;
 
 #if defined(LINKSTATE)
 #endif
