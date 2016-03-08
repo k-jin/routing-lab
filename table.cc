@@ -25,7 +25,6 @@ ostream & Table::Print(ostream &os) const
 	Table::Table()
 	{
 		parentNode = -1;
-		forwardingTable[pN][pN] = 0;
 	}
 	
 	Table::Table(const Table &rhs) :

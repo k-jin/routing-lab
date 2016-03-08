@@ -166,8 +166,8 @@ bool Node::Matches(const Node &rhs) const
     // table->SetEntry(*this->GetNumber(), destId, newLat);
     // For the updated link, we want to update the new shortest paths to each link within the distance vector
     // Getting own distance vector
-    map<unsigned, double> currRow = forwardingTable.GetRow(*this->GetNumber());
-    map<unsigned, double> neighborRow = forwardingTable.GetRow(destId);
+    map<unsigned, double> currRow = table->GetRow(this->GetNumber());
+    map<unsigned, double> neighborRow = table->GetRow(destId);
     // Updating the distance for that neighbor node
     currRow[destId] = newLat;
 
