@@ -169,7 +169,8 @@ bool Node::Matches(const Node &rhs) const
 
   Node *Node::GetNextHop(const Node *destination) const
   {
-    Table table = GetRoutingTable();
+    map<unsigned, map<unsigned, double> > table = GetRoutingTable();
+    map<unsigned, map<unsigned, double> >::iterator tableIt = table.begin();
     Node returnNode = *this;
     unsigned destId = destination.GetNumber();
     deque<Link*> links = *GetOutgoingLinks();
@@ -185,6 +186,26 @@ bool Node::Matches(const Node &rhs) const
         }
       }
     }
+
+    for(; tableIt != table.end(); ++tableIt) {
+      unsigned currNeighbor = tableIt->first;
+      map<unsigned, double> currRow = tableIt->second;
+      map<unsigned, double>::iterator rowIt = currRow.begin();
+      for(; rowIt != currRow.end(); ++rowIt) {
+        unsigned currDest = rowIt->first;
+        double currDistance = rowIt->second;
+        if (currDest == destId) {
+          double neighborDist = table.GetEntry(returnNode.GetNumber(), destId);
+          double totalDist = neighborDist + currDistance;
+          if (totalDist == minDist) {
+            returnNode.SetNumber(currDest);
+            return returnNode;
+          }
+        }
+      }
+    }
+    cerr << *this << "couldn't GetNextHop" << endl;
+    return -1;
 
     
   }
