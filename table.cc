@@ -16,13 +16,13 @@ ostream & Table::Print(ostream &os) const
 //TODO: probably don't need numNeighbors
 #if defined(DISTANCEVECTOR)
 	
-	Table::Table(unsigned pN, unsigned nN, std::map<unsigned, std::map<unsigned, double> > rT) : 
+	Table::Table(unsigned pN, unsigned nN, map<unsigned, map<unsigned, double> > rT) : 
 		parentNode(pN), numNeighbors(nN), routingTable(rT) {}
 		
 	Table::Table(unsigned pN) : 
 		parentNode(pN), numNeighbors(0)
 		{
-			std::map<unsigned, double> empty (0,0.0);
+			map<unsigned, double> empty (0,0.0);
 			for (unsigned i = 0; i < numNeighbors; i++){
 				routingTable[i] = empty;
 			}
@@ -31,19 +31,19 @@ ostream & Table::Print(ostream &os) const
 	Table::Table(unsigned pN, unsigned nN) : 
 		parentNode(pN), numNeighbors(nN)
 		{
-			std::map<unsigned, double> empty (0,0.0);
+			map<unsigned, double> empty (0,0.0);
 			for (unsigned i = 0; i < numNeighbors; i++){
 				routingTable[i] = empty;
 			}
 		}
 
-	Table::Table(unsigned pN, std::map<unsigned, std::map<unsigned, double> > rT) : 
+	Table::Table(unsigned pN, map<unsigned, map<unsigned, double> > rT) : 
 		parentNode(pN), numNeighbors(rT.size()), routingTable(rT) {}
 	
 	Table::Table()
 	{
 		parentNode = -1;
-		std::map<unsigned, double> empty (0,0.0);
+		map<unsigned, double> empty (0,0.0);
 		for (unsigned i = 0; i < numNeighbors; i++){
 			routingTable[i] = empty;
 		}
@@ -77,11 +77,11 @@ ostream & Table::Print(ostream &os) const
 	ostream & Table::Print(ostream &os) const
 	{
 		os << "Routing Table for node " << parentNode << endl;
-		std::map<unsigned, std::map<unsigned, double> >::iterator rowIt = routingTable.begin();
+		map<unsigned, map<unsigned, double> >::iterator rowIt = routingTable.begin();
 		for(rowIt; rowIt != routingTable.end(); ++rowIt){
 			os << "Neighbor node: " << rowIt->first << "\t";
-			std::map<unsigned, double> currRow = rowIt->second;
-			std::map<unsigned, double>::iterator entryIt = currRow.begin();
+			map<unsigned, double> currRow = rowIt->second;
+			map<unsigned, double>::iterator entryIt = currRow.begin();
 			for(entryIt; entryIt != currRow.end(); ++entryIt){
 				unsigned currDest = entryIt->first;
 				double currDist = entryIt->second;
@@ -99,11 +99,11 @@ ostream & Table::Print(ostream &os) const
 	unsigned Table::GetParentNode() const {return parentNode;}
 	void Table::SetNumNeighbors(unsigned number) { numNeighbors = number; }
 	unsigned Table::GetNumNeighbors() const {return numNeighbors;}
-	void Table::SetRow(unsigned neighborId, std::map<unsigned, double> row) 
+	void Table::SetRow(unsigned neighborId, map<unsigned, double> row) 
 	{
 		routingTable[neighborId] = row;
 	}
-	std::map<unsigned, double> Table::GetRow(unsigned neighborId) const { return routingTable[neighborId]; }
+	map<unsigned, double> Table::GetRow(unsigned neighborId) const { return routingTable[neighborId]; }
 	void Table::SetEntry(unsigned neighborId, unsigned destId, double distance)
 	{
 		routingTable[neighborId][destId] = distance;
