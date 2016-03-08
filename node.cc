@@ -149,6 +149,7 @@ bool Node::Matches(const Node &rhs) const
 
 #if defined(DISTANCEVECTOR)
 
+  // TODO: DONT SEND DV MESSAGE TO LINK THAT IS BEING UPDATED
   void Node::LinkHasBeenUpdated(const Link *l)
   {
     // update our table
@@ -160,6 +161,30 @@ bool Node::Matches(const Node &rhs) const
     Link newLink = *l;
     unsigned destId = newLink.GetDest();
     double newLat = newLink.GetLatency();
+
+    // update forwarding table entry 
+    // table->SetEntry(*this->GetNumber(), destId, newLat);
+    // For the updated link, we want to update the new shortest paths to each link within the distance vector
+    // Getting own distance vector
+    map<unsigned, double> currRow = forwardingTable.GetRow(*this->GetNumber());
+    map<unsigned, double> neighborRow = forwardingTable.GetRow(destId);
+    // Updating the distance for that neighbor node
+    currRow[destId] = newLat;
+
+    map<unsigned, double>::iterator entryIt = currRow.begin();
+    for(; entryIt != currRow.end(); ++entryIt){
+      unsigned currDest = entryIt->first;
+      double minDist = entryIt->second;
+      // EDGE CASE: if neighborRow[currDest] does not exist
+      // initialize neighborRow[currDest] to infinity
+      if(neighborRow.count(currDest) == 0) {
+        neighborRow[currDest] = numeric_limits<double>::infinity();
+      }
+      currRow[currDest] = min(minDist, newLat + neighborRow[currDest]);
+    }
+
+    
+
 
 
   }
@@ -181,20 +206,25 @@ bool Node::Matches(const Node &rhs) const
     Table table = *GetRoutingTable();
     map<unsigned, map<unsigned, double> > forwardingTable = table.GetForwardingTable();
     map<unsigned, map<unsigned, double> >::iterator tableIt = forwardingTable.begin();
+
     // initialized node to be returned, will be returned with next node in path
     Node* returnNode = new Node(*this);
+
     // destination id of final node
     unsigned destId = destination->GetNumber();
+
     // links are all outgoing links from current node
     deque<Link*> links = *context->Topology::GetOutgoingLinks(returnNode);
-    // number of outgoing linkes
+
+    // number of outgoing links
     unsigned linksSize = links.size();
+
     // shortest distance to destination node
     double minDist = table.GetEntry(number, destId);
 
     // iterate through links to check for direct link to destination node
     // if direct link exists, check if latency is equal to minDist
-          // if so, return returnNode with destId
+      // if so, return returnNode with destId
     for(unsigned i = 0; i < linksSize; i++) {
       Link currLink = *links[i];
       if(currLink.GetDest() == destId) {

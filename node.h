@@ -4,6 +4,7 @@
 #include <new>
 #include <iostream>
 #include <deque>
+#include <limits>
 
 
 class RoutingMessage;
@@ -27,6 +28,7 @@ class Node {
 #endif
 
 #if defined(DISTANCEVECTOR)
+
 #endif
 
   // students will add protocol-specific data here

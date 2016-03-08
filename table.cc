@@ -19,10 +19,13 @@ ostream & Table::Print(ostream &os) const
 		parentNode(pN), forwardingTable(fT) {}
 		
 	Table::Table(unsigned pN) : 
-		parentNode(pN) {}
+		parentNode(pN) {
+			forwardingTable[pN][pN] = 0;
+		}
 	Table::Table()
 	{
 		parentNode = -1;
+		forwardingTable[pN][pN] = 0;
 	}
 	
 	Table::Table(const Table &rhs) :
