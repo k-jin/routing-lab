@@ -159,7 +159,7 @@ bool Node::Matches(const Node &rhs) const
     Table* table = GetRoutingTable();
     map<unsigned, map<unsigned, double> > forwardingTable = table->GetForwardingTable();
     map<unsigned, map<unsigned, double> >::iterator tableIt = forwardingTable.begin();
-    deque<Node*> neighbors = this->GetNeighbors();
+    deque<Node*> neighbors = *this->GetNeighbors();
     deque<Node*>::iterator neighborsIt = neighbors.begin();
     Link newLink = *l;
     unsigned destId = newLink.GetDest();
@@ -180,15 +180,15 @@ bool Node::Matches(const Node &rhs) const
       double minDist = entryIt->second;
       // EDGE CASE: if neighborRow[currDest] does not exist
       // initialize neighborRow[currDest] to infinity
-      if(neighborRow.count(currDest) == 0)
+      if(neighborRow.count(currDest) == 0) {
         neighborRow[currDest] = numeric_limits<double>::infinity();
       }
       currRow[currDest] = min(minDist, newLat + neighborRow[currDest]);
     }
     table->SetRow(this->GetNumber(), currRow);
-    table->SetRow(destId, neighborRow));
-    // destId is placeholder 
-    RoutingMessage rm = RoutingMessage(this->GetNumber(), destId, currRow);
+    table->SetRow(destId, neighborRow);
+    // destId is placeholder "unsigned int&" -> "unsigned int"
+    RoutingMessage rm = new RoutingMessage(this->GetNumber(), this->GetNumber(), currRow);
 
 
     for(; neighborsIt != neighbors.end(); ++neighborsIt) {
