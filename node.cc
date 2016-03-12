@@ -188,15 +188,15 @@ bool Node::Matches(const Node &rhs) const
     table->SetRow(this->GetNumber(), currRow);
     table->SetRow(destId, neighborRow);
     // destId is placeholder "unsigned int&" -> "unsigned int"
-    RoutingMessage rm = new RoutingMessage(this->GetNumber(), this->GetNumber(), currRow);
+    RoutingMessage* rm = new RoutingMessage(this->GetNumber(), this->GetNumber(), currRow);
 
 
     for(; neighborsIt != neighbors.end(); ++neighborsIt) {
-      Node currNeighbor = neighborsIt->first;
+      Node currNeighbor = **neighborsIt;
       if(currNeighbor.GetNumber() != destId) {
-        RoutingMessage msg = RoutingMessage(rm);
+        RoutingMessage msg = RoutingMessage(*rm);
         msg.SetDst(currNeighbor.GetNumber());
-        SendToNeighbor(currNeighbor, msg);
+        SendToNeighbor(&currNeighbor, &msg);
       }
       
     }

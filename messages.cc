@@ -31,7 +31,15 @@ RoutingMessage::RoutingMessage(const RoutingMessage &rhs)
 
 ostream &RoutingMessage::Print(ostream &os) const
 {
-  os << "Routing body message=" << body << endl;
+	os << "RoutingMsg SRC=" << src << endl << "RoutingMSG DST=" << dst << endl;
+  os << "DV for " << src << endl;
+  map<unsigned, double> body = GetBody();
+  map<unsigned, double>::iterator bodyIt = body.begin();
+  for(; bodyIt != body.end(); ++bodyIt){
+  	unsigned currDest = bodyIt->first;
+  	double currDist = bodyIt->second;
+  	os << "Destination node=" << currDest << "/Distance=" << currDist << endl;
+  }
   return os;
 }
 
