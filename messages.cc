@@ -38,11 +38,15 @@ ostream &RoutingMessage::Print(ostream &os) const
 RoutingMessage::RoutingMessage()
 {}
 
-RoutingMessage::RoutingMessage(map<unsigned, double> b) : body(b) {}
+RoutingMessage::RoutingMessage(unsigned s, unsigned d, map<unsigned, double> b) : src(s), dst(d), body(b) {}
 
 RoutingMessage::RoutingMessage(const RoutingMessage &rhs)
 {}
 
+void RoutingMessage::SetSrc(unsigned s) {src = s;}
+unsigned RoutingMessage::GetSrc() {return src; }
+void RoutingMessage::SetDst(unsigned d) {dst = d;}
+unsigned RoutingMessage::GetDst() {return dst;}
 void RoutingMessage::SetBody(map<unsigned, double> b) { body = b; }
 map<unsigned, double> RoutingMessage::GetBody() const { return body; }
 
