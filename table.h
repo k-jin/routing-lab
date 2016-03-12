@@ -28,16 +28,18 @@ class Table {
  public:
  
   Table();
-  Table(int numNodes);
-  map<int, map<int , std::tuple<double, int> > > lsTable;
+  Table(unsigned numNodes);
+  Table(const Table &rhs);
+  Table & operator=(const Table &rhs);
+  virtual ~Table();
+	
+  map<unsigned, map<unsigned , std::tuple<double, unsigned> > > lsTable;
   
-  void updateRow(int rowNum);
-  void updateEntry(int entryNum);
-  map<int , std::tuple<double, int> >getRow(int rowNum);
-  std::tuple<double,int> getEntry(int entryNum);
-  
-  
-   
+  void updateRow(unsigned rowNum);
+  void updateEntry(unsigned entryNum);
+  map<unsigned , std::tuple<double, unsigned> >getRow(unsigned rowNum);
+  std::tuple<double,unsigned> getEntry(unsigned entryNum);
+ 
   ostream & Print(ostream &os) const;
 };
 #endif

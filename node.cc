@@ -70,6 +70,8 @@ bool Node::Matches(const Node &rhs) const
 
 
 #if defined(GENERIC)
+
+
   void Node::LinkHasBeenUpdated(const Link *l)
   {
     cerr << *this << " got a link update: "<<*l<<endl;

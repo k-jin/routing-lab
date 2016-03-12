@@ -11,6 +11,27 @@ ostream & Table::Print(ostream &os) const
 
 #if defined(LINKSTATE)
 
+	Table::Table(unsigned pN, map<unsigned, map<unsigned, double> > fT) : 
+	 lsTable(fT) {}
+		
+	
+	Table::Table()
+	{
+		//parentNode = -1;
+		map<unsigned, map<unsigned , std::tuple<double, unsigned> > > lsTable;
+	}
+	
+	Table::Table(const Table &rhs) :
+		lsTable(rhs.forwardingTable) {}
+		
+	Table & Table::operator=(const Table &rhs)
+	{
+		return *(new (this) Table(rhs));
+	}
+	
+	Table::~Table()
+	{}
+
  map<int , std::tuple<double, int> > Table::getRow(int rowNum){
 	 return lsTable[rowNum];
  }
@@ -18,6 +39,8 @@ ostream & Table::Print(ostream &os) const
  std::tuple<double, int> Table::getEntry(int entryNum){
 	 return lsTable[rowNum][entryNum];
  }
+ 
+ 
  
  
 #endif
