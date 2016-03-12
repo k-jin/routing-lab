@@ -44,9 +44,9 @@ RoutingMessage::RoutingMessage(const RoutingMessage &rhs)
 {}
 
 void RoutingMessage::SetSrc(unsigned s) {src = s;}
-unsigned RoutingMessage::GetSrc() {return src; }
+unsigned RoutingMessage::GetSrc() const {return src; }
 void RoutingMessage::SetDst(unsigned d) {dst = d;}
-unsigned RoutingMessage::GetDst() {return dst;}
+unsigned RoutingMessage::GetDst() const {return dst;}
 void RoutingMessage::SetBody(map<unsigned, double> b) { body = b; }
 map<unsigned, double> RoutingMessage::GetBody() const { return body; }
 
