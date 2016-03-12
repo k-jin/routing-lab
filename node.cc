@@ -157,8 +157,6 @@ bool Node::Matches(const Node &rhs) const
     // send out routing mesages
     cerr << *this<<": Link Update: "<<*l<<endl;
     Table* table = GetRoutingTable();
-    map<unsigned, map<unsigned, double> > forwardingTable = table->GetForwardingTable();
-    map<unsigned, map<unsigned, double> >::iterator tableIt = forwardingTable.begin();
     deque<Node*> neighbors = *this->GetNeighbors();
     deque<Node*>::iterator neighborsIt = neighbors.begin();
     Link newLink = *l;
@@ -169,26 +167,26 @@ bool Node::Matches(const Node &rhs) const
     // table->SetEntry(*this->GetNumber(), destId, newLat);
     // For the updated link, we want to update the new shortest paths to each link within the distance vector
     // Getting own distance vector
-    map<unsigned, double> currRow = table->GetRow(this->GetNumber());
-    map<unsigned, double> neighborRow = table->GetRow(destId);
+    map<unsigned, double> nodeDv = table->GetRow(this->GetNumber());
+    map<unsigned, double> neighborDv = table->GetRow(destId);
     // Updating the distance for that neighbor node
-    currRow[destId] = newLat;
+    nodeDv[destId] = newLat;
 
-    map<unsigned, double>::iterator entryIt = currRow.begin();
-    for(; entryIt != currRow.end(); ++entryIt){
+    map<unsigned, double>::iterator entryIt = nodeDv.begin();
+    for(; entryIt != nodeDv.end(); ++entryIt){
       unsigned currDest = entryIt->first;
       double minDist = entryIt->second;
-      // EDGE CASE: if neighborRow[currDest] does not exist
-      // initialize neighborRow[currDest] to infinity
-      if(neighborRow.count(currDest) == 0) {
-        neighborRow[currDest] = numeric_limits<double>::infinity();
+      // EDGE CASE: if neighborDv[currDest] does not exist
+      // initialize neighborDv[currDest] to infinity
+      if(neighborDv.count(currDest) == 0) {
+        neighborDv[currDest] = numeric_limits<double>::infinity();
       }
-      currRow[currDest] = min(minDist, newLat + neighborRow[currDest]);
+      nodeDv[currDest] = min(minDist, newLat + neighborDv[currDest]);
     }
-    table->SetRow(this->GetNumber(), currRow);
-    table->SetRow(destId, neighborRow);
-    // destId is placeholder "unsigned int&" -> "unsigned int"
-    RoutingMessage* rm = new RoutingMessage(this->GetNumber(), this->GetNumber(), currRow);
+    table->SetRow(this->GetNumber(), nodeDv);
+    table->SetRow(destId, neighborDv);
+    this.routingTable = table;
+    RoutingMessage* rm = new RoutingMessage(this->GetNumber(), this->GetNumber(), nodeDv);
 
 
     for(; neighborsIt != neighbors.end(); ++neighborsIt) {
@@ -207,7 +205,59 @@ bool Node::Matches(const Node &rhs) const
 
   void Node::ProcessIncomingRoutingMessage(const RoutingMessage *m)
   {
+    RoutingMessage msg = *rm;
+    if(this->GetNumber() == msg.GetDst()){
+      // Copy of routing table
+      Table* table = GetRoutingTable();
+      // Get neighbors of current node and init iterator
+      deque<Node*> neighbors = *this->GetNeighbors();
+      deque<Node*>:iterator neighborsIt = neighbors.begin();
 
+      unsigned srcId = msg.GetSrc();
+      unsigned nodeId = this->GetNumber());
+      // DV of node
+      map<unsigned, double> nodeDv = table->GetRow(nodeId);
+      // Newly received DV for node with srcId
+      map<unsigned, double> newDv = msg.GetBody();
+      map<unsigned, double>::iterator dvIt = newDv.begin();
+      bool updated = false;
+
+      // Update table with new DV for node srcId
+      table->SetRow(srcId, newDv);
+
+      // Update own DV by checking if there are new minimums
+      for(; dvIt != newDv.end(); ++dvIt) {
+        unsigned currDestId = dvIt->first;
+        double currDistance = dvIt->second;
+        if(nodeDv.count(currDestId) == 0){
+          nodeDv[currDestId] = currDistance;
+          updated = true;
+        } else {
+          nodeDv[currDestId] = min(nodeDv[currDestId], nodeDv[srcId] + newDv[currDestId]);
+          if (table->GetEntry(nodeId, currDestId) != nodeDv[currDestId]){
+            updated = true;
+          }
+        }
+      }
+
+      this.routingTable = table;
+      
+      if(updated){
+        table->SetRow(nodeId, nodeDv);
+        RoutingMessage* rm = new RoutingMessage(nodeId, nodeId, nodeDv);
+        for(; neighborsIt != neighbors.end(); ++neighborsIt) {
+          Node currNeighbor = **neighborsIt;
+          // Unsure if we should or should not send the new DV back to the src
+          if(currNeighbor.GetNumber() != srcId) {
+            RoutingMessage msg = RoutingMessage(*rm);
+            msg.SetDst(currNeighbor.GetNumber());
+            SendToNeighbor(&currNeighbor, &msg);
+          }
+        }
+      }
+
+      
+    }
   }
 
   void Node::TimeOut()
