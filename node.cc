@@ -198,22 +198,21 @@ bool Node::Matches(const Node &rhs) const
 //    PrintRow(nodeDv);
 //    cerr << "neighborDv=";
 //    PrintRow(neighborDv);
-    this->routingTable.SetRow(nodeId, nodeDv);
-    this->routingTable.SetRow(destId, neighborDv);
+    	this->routingTable.SetRow(nodeId, nodeDv);
+    	this->routingTable.SetRow(destId, neighborDv);
     
-    for(; neighborsIt != neighbors.end(); ++neighborsIt) {
       Node currNeighbor = **neighborsIt;
 			RoutingMessage* msg = new RoutingMessage();
 			msg->SetSrc(nodeId);
 			msg->SetDv(nodeId);
-			msg->SetDst(currNeighbor.GetNumber());
+			//msg->SetDst(currNeighbor.GetNumber());
 			msg->SetBody(nodeDv);
 //			cerr << "Sending own DV: " << *msg << endl;
-			SendToNeighbor(&currNeighbor, msg);
+			SendToNeighbors(msg);
 
-    }
     
-//    cerr << "FOR NODE: " << nodeId << endl << *GetRoutingTable() <<endl;
+    
+//    cerr << "FOR NODE: " << nodeId << endl << *GetRoutingTable() <<endl;	
 
   }
 
@@ -223,7 +222,7 @@ bool Node::Matches(const Node &rhs) const
 //    cerr << "NODE: " << this->GetNumber() << endl;
 //  	if(this->GetNumber() == 1){
 //  	cerr << "routing msg " << *m << endl;}
-    if(this->GetNumber() == m->GetDst()){
+    //if(this->GetNumber() == m->GetDst()){
       // Copy of routing table
       Table* table = GetRoutingTable();
       //cerr << "PROCESSING INCOMING" << *table << endl;
@@ -280,8 +279,6 @@ bool Node::Matches(const Node &rhs) const
         RoutingMessage* rm = new RoutingMessage(nodeId, nodeId, nodeId, nodeDv);
         for(; neighborsIt != neighbors.end(); ++neighborsIt) {
           Node currNeighbor = **neighborsIt;
-          // Unsure if we should or should not send the new DV back to the src
-          if(currNeighbor.GetNumber() != dvId) {
             RoutingMessage* msg = new RoutingMessage();
             msg->SetSrc(nodeId);
             msg->SetDv(nodeId);
@@ -289,13 +286,12 @@ bool Node::Matches(const Node &rhs) const
             msg->SetBody(nodeDv);
 //            cerr << "Sending updated dv: " << *msg << endl;
             SendToNeighbor(&currNeighbor, msg);
-          }
         }
       }
 //      cerr << "POST INCOME " << *GetRoutingTable() << endl;
 
       
-    }
+//    }
   }
 
   void Node::TimeOut()
@@ -309,7 +305,7 @@ bool Node::Matches(const Node &rhs) const
 //  	cerr << "here?" << endl;
     Table table = *GetRoutingTable();
 //    cerr << "NODE: " << this->GetNumber() << endl;
-//    cerr << table << endl;
+    cerr << table << endl;
     map<unsigned, map<unsigned, double> > forwardingTable = table.GetForwardingTable();
     map<unsigned, map<unsigned, double> >::iterator tableIt = forwardingTable.begin();
 
@@ -318,6 +314,8 @@ bool Node::Matches(const Node &rhs) const
 
     // destination id of final node
     unsigned destId = destination->GetNumber();
+    
+//    cerr << "DEST: " << destId << endl;
 
     // links are all outgoing links from current node
     deque<Link*> links = *context->Topology::GetOutgoingLinks(returnNode);
@@ -336,6 +334,7 @@ bool Node::Matches(const Node &rhs) const
       if(currLink.GetDest() == destId) {
         if(minDist == currLink.GetLatency()) {
           returnNode->SetNumber(destId);
+//          cerr << "Neighbor " << *returnNode << endl;
           return returnNode;
         }
       }
@@ -357,6 +356,7 @@ bool Node::Matches(const Node &rhs) const
           double totalDist = neighborDist + currDistance;
           if (totalDist == minDist) {
             returnNode->SetNumber(currNeighbor);
+//          	cerr << "Not neighbor: " << *returnNode << endl;
             return returnNode;
           }
         }
