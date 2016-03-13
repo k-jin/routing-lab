@@ -6,13 +6,16 @@
 
 Node::Node(const unsigned n, SimulationContext *c, double b, double l) : 
     number(n), context(c), bw(b), lat(l) 
-{}
+{
+	routingTable.SetEntry(n,n,0);
+	routingTable.SetParentNode(n);
+}
 
 Node::Node() 
 { throw GeneralException(); }
 
 Node::Node(const Node &rhs) : 
-  number(rhs.number), context(rhs.context), bw(rhs.bw), lat(rhs.lat) {}
+  number(rhs.number), context(rhs.context), bw(rhs.bw), lat(rhs.lat), routingTable(rhs.routingTable) {}
 
 Node & Node::operator=(const Node &rhs) 
 {
@@ -157,9 +160,11 @@ bool Node::Matches(const Node &rhs) const
     // send out routing mesages
     cerr << *this<<": Link Update: "<<*l<<endl;
     Table* table = GetRoutingTable();
+    cerr << "Initial table: " << *table << endl;
     deque<Node*> neighbors = *this->GetNeighbors();
     deque<Node*>::iterator neighborsIt = neighbors.begin();
     Link newLink = *l;
+    unsigned nodeId = this->GetNumber();
     unsigned destId = newLink.GetDest();
     double newLat = newLink.GetLatency();
 
@@ -167,7 +172,7 @@ bool Node::Matches(const Node &rhs) const
     // table->SetEntry(*this->GetNumber(), destId, newLat);
     // For the updated link, we want to update the new shortest paths to each link within the distance vector
     // Getting own distance vector
-    map<unsigned, double> nodeDv = table->GetRow(this->GetNumber());
+    map<unsigned, double> nodeDv = table->GetRow(nodeId);
     map<unsigned, double> neighborDv = table->GetRow(destId);
     // Updating the distance for that neighbor node
     nodeDv[destId] = newLat;
@@ -176,45 +181,63 @@ bool Node::Matches(const Node &rhs) const
     for(; entryIt != nodeDv.end(); ++entryIt){
       unsigned currDest = entryIt->first;
       double minDist = entryIt->second;
+//      cerr << "Current destination node: " << currDest << endl << "Min Distance: " << minDist << endl;
       // EDGE CASE: if neighborDv[currDest] does not exist
       // initialize neighborDv[currDest] to infinity
+
+//    	cerr << "current neighborDv[currDest]" << neighborDv[currDest] << endl;
+    	// TODO: update neighbor's DV with routing message with their own updated DV
       if(neighborDv.count(currDest) == 0) {
         neighborDv[currDest] = numeric_limits<double>::infinity();
+//        cerr << "initialized neighborDv[currDest]" << neighborDv[currDest] << endl;
       }
+//      cerr << "nodeDv[currDest] current minimum distance for dest node: " << nodeDv[currDest] << endl;
+//      cerr << "current minDist (should be equal to above): " << minDist << endl;
+//      cerr << "new distance: " << newLat+neighborDv[currDest] << endl;
       nodeDv[currDest] = min(minDist, newLat + neighborDv[currDest]);
+//      cerr << "updated nodeDv[currDest]: " << nodeDv[currDest] << endl;
     }
-    table->SetRow(this->GetNumber(), nodeDv);
-    table->SetRow(destId, neighborDv);
-    this.routingTable = table;
-    RoutingMessage* rm = new RoutingMessage(this->GetNumber(), this->GetNumber(), nodeDv);
-
+    
+//    table->SetRow(this->GetNumber(), nodeDv);
+//    table->SetRow(destId, neighborDv);
+    
+    this->routingTable.SetRow(nodeId, nodeDv);
+    this->routingTable.SetRow(destId, neighborDv);
+    
+    RoutingMessage* nodeRm = new RoutingMessage(nodeId, nodeId, nodeDv);
+    RoutingMessage* neighborRm = new RoutingMessage(destId, destId, neighborDv);
 
     for(; neighborsIt != neighbors.end(); ++neighborsIt) {
       Node currNeighbor = **neighborsIt;
       if(currNeighbor.GetNumber() != destId) {
-        RoutingMessage msg = RoutingMessage(*rm);
+        RoutingMessage msg = RoutingMessage(*nodeRm);
         msg.SetDst(currNeighbor.GetNumber());
         SendToNeighbor(&currNeighbor, &msg);
-      }
+      } 
+      RoutingMessage neighMsg = RoutingMessage(*neighborRm);
+      neighMsg.SetDst(currNeighbor.GetNumber());
+      SendToNeighbor(&currNeighbor, &neighMsg);
       
     }
-
+    cerr << "FOR NODE: " << nodeId << endl << *GetRoutingTable() <<endl;
 
   }
 
 
   void Node::ProcessIncomingRoutingMessage(const RoutingMessage *m)
   {
-    RoutingMessage msg = *rm;
+    RoutingMessage msg = *m;
     if(this->GetNumber() == msg.GetDst()){
       // Copy of routing table
       Table* table = GetRoutingTable();
+      //cerr << "PROCESSING INCOMING" << *table << endl;
+      		
       // Get neighbors of current node and init iterator
       deque<Node*> neighbors = *this->GetNeighbors();
-      deque<Node*>:iterator neighborsIt = neighbors.begin();
+      deque<Node*>::iterator neighborsIt = neighbors.begin();
 
       unsigned srcId = msg.GetSrc();
-      unsigned nodeId = this->GetNumber());
+      unsigned nodeId = this->GetNumber();
       // DV of node
       map<unsigned, double> nodeDv = table->GetRow(nodeId);
       // Newly received DV for node with srcId
@@ -223,8 +246,9 @@ bool Node::Matches(const Node &rhs) const
       bool updated = false;
 
       // Update table with new DV for node srcId
-      table->SetRow(srcId, newDv);
-
+//      table->SetRow(srcId, newDv);
+      this->routingTable.SetRow(srcId, newDv);
+      
       // Update own DV by checking if there are new minimums
       for(; dvIt != newDv.end(); ++dvIt) {
         unsigned currDestId = dvIt->first;
@@ -239,11 +263,10 @@ bool Node::Matches(const Node &rhs) const
           }
         }
       }
-
-      this.routingTable = table;
       
       if(updated){
-        table->SetRow(nodeId, nodeDv);
+//        table->SetRow(nodeId, nodeDv);
+      	this->routingTable.SetRow(nodeId, nodeDv);
         RoutingMessage* rm = new RoutingMessage(nodeId, nodeId, nodeDv);
         for(; neighborsIt != neighbors.end(); ++neighborsIt) {
           Node currNeighbor = **neighborsIt;
@@ -255,6 +278,7 @@ bool Node::Matches(const Node &rhs) const
           }
         }
       }
+      //cerr << "POST INCOME " << *GetRoutingTable() << endl;
 
       
     }
@@ -321,9 +345,11 @@ bool Node::Matches(const Node &rhs) const
         }
       }
     }
-
+    //cerr << table << endl;
+    //cerr << "Destination node: " << *destination << endl;
+    //cerr << *GetRoutingTable() << endl;
     // error, the destination node can't be found in the routing table
-    cerr << *this << "couldn't GetNextHop, couldn''t find dest node in routing table" << endl;
+    cerr << *this << " couldn't GetNextHop, couldn''t find dest node in routing table" << endl;
     return new Node();
 
     

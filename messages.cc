@@ -41,7 +41,7 @@ ostream &RoutingMessage::Print(ostream &os) const
   	os << "Destination node=" << currDest << "/Distance=" << currDist << endl;
   }
   return os;
-}
+}	
 
 RoutingMessage::RoutingMessage()
 {}
