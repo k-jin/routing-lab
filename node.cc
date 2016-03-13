@@ -124,7 +124,7 @@ bool Node::Matches(const Node &rhs) const
 	  
 	  
 	  // send a routing message
-	  RoutingMessage *rm = new RoutingMessage(l->GetSrc(),l->GetDst(),l->GetLatency());
+	  RoutingMessage *rm = new RoutingMessage(l->GetSrc(),l->GetDest(),l->GetLatency());
 	  SendToNeighbors(rm);
 	}
 
@@ -135,7 +135,7 @@ bool Node::Matches(const Node &rhs) const
 	  
 	  
 	  
-	  RoutingMessage *rm = new RoutingMessage(m->getSrc(),m->getDst(),m->getLatency());
+	  RoutingMessage *rm = new RoutingMessage(m->GetSrc(),m->GetDst(),m->GetLatency());
 	  SendToNeighbors(rm);
 	  
 	}
@@ -160,8 +160,8 @@ bool Node::Matches(const Node &rhs) const
 		unsigned destId = destination->GetNumber();
 
 		
-		unsigned srcId= *this->getNumber();
-		map<unsigned , double > srcRow= linkTable.getRow(*this->getNumber());
+		unsigned srcId= this->GetNumber();
+		map<unsigned , double > srcRow= linkTable->GetRow(this->getNumber());
 		
 		if(srcId==destId){
 			return returnNode;
@@ -170,9 +170,11 @@ bool Node::Matches(const Node &rhs) const
 		//this is the number of nodes in the graph at this point
 		unsigned numNodes=linkTable.size();
 		
+		//FORGOT TO INITIALIZE THE MAPS FROM THE TABLE
+		
 		//initialize vectors with default values before we start djikstras
 		 map<unsigned, bool> visited ; //<node num, bool visited>
-		 map<unsigned, unsigned> preds; //<node num, node predecessor>
+		 map<unsigned, unsigned> pred; //<node num, node predecessor>
 		 map<unsigned, double> dists; //<node number, distance from src>
 		 
 		 //setting the values for the startig node
@@ -186,13 +188,13 @@ bool Node::Matches(const Node &rhs) const
 		
 		//ok. so now we want to set the predecessors and the distance for all the nodes relative to the src
 		 
-		 map<unsigned, double> srcRow = linkTable->GetRow(srcId);
+		// map<unsigned, double> *srcRow = linkTable->GetRow(srcId);
 		 //now we want to go through srcRow and set the costs relative to the src node
 		 // then we do setRow so that the table is updated
 		 
 		 for(map<unsigned, double>::iterator itr= srcRow.begin(); itr!=srcRow.end(); ++itr){
 			 //only do this if itr is a neigbour of src
-			 deque<Node*> srcNeighbours = *this->Node::GetNeighbours();
+			 deque<Node*> srcNeighbours = *this->Node::GetNeighbors();
 			 
 			 for(std::deque<Node*>::iterator dit=srcNeighbours.begin();dit!=srcNeighbours().end();++dit){
 				 if(dit->getNumber()==itr->first)
@@ -231,7 +233,7 @@ bool Node::Matches(const Node &rhs) const
 				 //~ udist=minDist;
 			 //~ }
 			 
-			 for(map<unsigned, double>::iterator it3=linkTable.getRow(minNumber).begin(); it3!=linkTable.getRow(minNumber).end(); ++it3){
+			 for(map<unsigned, double>::iterator it3=linkTable->GetRow(minNumber).begin(); it3!=linkTable->getRow(minNumber).end(); ++it3){
 				 double altCost= it3->second + dists[minNumber];
 				 if(dists[it3->first] > altCost && visited[it3->first]==false){
 					 dists[it3->first]=altCost;
@@ -248,7 +250,7 @@ bool Node::Matches(const Node &rhs) const
 		 //finished the djikstras part
 		 
 		 // now we want to return the next hop. lol finally
-		 tempDestId=destId;
+		 unsigned tempDestId=destId;
 		 unsigned secondLast = pred[destId];
 		 //we want to trace back to the src folowing the pred trail
 		 while(secondLast!=srcId){
@@ -257,12 +259,12 @@ bool Node::Matches(const Node &rhs) const
 		 }
 		 //tempDestId is now the next hop. woohoo
 		 
-		 deque<Node*> srcNeighbours2 = *this->Node::GetNeighbours();
+		 deque<Node*> srcNeighbours2 = this->Node::GetNeighbors();
 		 //iterate through the neighbours to find the Node with the matching Node Number
 		 //use Node.matches
-		 for(std::deque<Node*>::iterator dit3=srcNeighbours2.begin();dit3!=srcNeighbours2().end();++dit3){
-			 if(tempDestId==it3->GetNumber()){
-				return new Node(it3); 
+		 for(std::deque <Node*>::iterator dit3=srcNeighbours2.begin();dit3!=srcNeighbours2().end();++dit3){
+			 if(tempDestId==dit3->GetNumber()){
+				return new Node(dit3); 
 			 }
 			 
 		

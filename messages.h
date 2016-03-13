@@ -58,7 +58,7 @@ struct RoutingMessage {
 };
 #endif
 
-l
+
 inline ostream & operator<<(ostream &os, const RoutingMessage &m) { return m.Print(os);}
 
 #endif

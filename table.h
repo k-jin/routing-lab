@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <map>
+//#include <tuple>
 
 using namespace std;
 
@@ -33,7 +34,7 @@ class Table {
   Table & operator=(const Table &rhs);
   virtual ~Table();
 	
-  map<unsigned, map<unsigned , std::tuple<double, unsigned> > > lsTable;
+  //map<unsigned, map<unsigned , std::tuple<double, unsigned> > > lsTable;
   
   //table of links. each entry is the cost of the link from src to dest
   map<unsigned ,map<unsigned , double> > linkTable;
