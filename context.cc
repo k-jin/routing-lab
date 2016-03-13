@@ -144,6 +144,7 @@ void SimulationContext::LoadTopology(const string &file)
   while ((e=GetEarliestEvent())) { 
     e->Dispatch();
     e->Disassociate();
+//    cerr << *e << endl;
     delete e;
   }
 }
@@ -340,10 +341,12 @@ void SimulationContext::SendToNeighbors(const Node *src, const RoutingMessage *m
 void SimulationContext::SendToNeighbor(const Node *src, const Node *dest, const RoutingMessage *m)
 {
   Link *l = FindMatchingLink(&Link(src->GetNumber(),dest->GetNumber(),0,0,0));
-
+  //cerr << "Current time: " << GetTime() << endl;
+  //cerr << "When to happen: " << GetTime() + l->GetLatency() << endl;
   PostEvent(new Event(GetTime()+l->GetLatency(),
 		      ROUTING_MESSAGE_ARRIVAL,
 		      FindMatchingNode(dest),
 		      (void*)m));
+  //cerr << "in send to neighbor " << *m << endl;
 }
 					 

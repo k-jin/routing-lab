@@ -29,11 +29,11 @@ struct RoutingMessage {
 
 #if defined(DISTANCEVECTOR)
 struct RoutingMessage {
-  unsigned src, dst;
+  unsigned src, dst, dv;
   map<unsigned, double> body;
 
   RoutingMessage();
-  RoutingMessage(unsigned s, unsigned d, map<unsigned, double> b);
+  RoutingMessage(const unsigned s, const unsigned d, const unsigned dvr, const map<unsigned, double> b);
   RoutingMessage(const RoutingMessage &rhs);
   RoutingMessage &operator=(const RoutingMessage &rhs);
 
@@ -41,6 +41,8 @@ struct RoutingMessage {
   virtual unsigned GetSrc() const;
   virtual void SetDst(unsigned nodeId);
   virtual unsigned GetDst() const;
+  virtual void SetDv(unsigned nodeId);
+  virtual unsigned GetDv() const;
   virtual void SetBody(map<unsigned, double> body);
   virtual map<unsigned, double> GetBody() const;
 

@@ -28,7 +28,8 @@ class Node {
 #endif
 
 #if defined(DISTANCEVECTOR)
-
+virtual void PrintTable(map< unsigned, map<unsigned, double> > table);
+virtual void PrintRow(map<unsigned, double> row);
 #endif
 
   // students will add protocol-specific data here
