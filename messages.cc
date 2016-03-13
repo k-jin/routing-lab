@@ -19,10 +19,18 @@ ostream &RoutingMessage::Print(ostream &os) const
 
 RoutingMessage::RoutingMessage()
 {}
-
-
-RoutingMessage::RoutingMessage(const RoutingMessage &rhs)
+RoutingMessage::RoutingMessage(unsigned s, unsigned d, unsigned l):src(s),dst(d),latency(l)
 {}
+
+RoutingMessage::RoutingMessage(const RoutingMessage &rhs):src(rhs.src),dst(rhs.dst),latency(rhs.latency)
+{}
+  void SetSrc(unsigned src) {src=s;}
+  void SetDst(unsigned dst){dst=d;}
+  void SetLatency(unsigned latency){latency=l;}
+  
+  unsigned GetSrc() const {return src;}
+  unsigned GetDst() const {return dst;}
+  unsigned GetLatency() const {return latency;}
 
 #endif
 

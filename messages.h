@@ -19,9 +19,24 @@ struct RoutingMessage {
 #if defined(LINKSTATE)
 struct RoutingMessage {
 
+  unsigned src;
+  unsigned dst;
+  double latency;
+  
   RoutingMessage();
+  RoutingMessage(unsigned s, unsigned d, unsigned l);
   RoutingMessage(const RoutingMessage &rhs);
   RoutingMessage &operator=(const RoutingMessage &rhs);
+  
+  void SetSrc(unsigned s);
+  void SetDst(unsigned d);
+  void SetLatency(unsigned l);
+  
+  unsigned GetSrc() const;
+  unsigned GetDst() const;
+  unsigned GetLatency() const;
+  
+  
 
   ostream & Print(ostream &os) const;
 };
@@ -43,7 +58,7 @@ struct RoutingMessage {
 };
 #endif
 
-
+l
 inline ostream & operator<<(ostream &os, const RoutingMessage &m) { return m.Print(os);}
 
 #endif

@@ -117,12 +117,27 @@ bool Node::Matches(const Node &rhs) const
 	void Node::LinkHasBeenUpdated(const Link *l)
 	{
 	  cerr << *this<<": Link Update: "<<*l<<endl;
+	  
+	  //now we want to get the fields of the link
+	  // save them into the linkTable
+	  this->routingTable.setEntry(l->GetSrc(),l->GetDest(),l->GetLatency());
+	  
+	  
+	  // send a routing message
+	  RoutingMessage *rm = new RoutingMessage(l->GetSrc(),l->GetDst(),l->GetLatency());
+	  SendToNeighbors(rm);
 	}
 
 
 	void Node::ProcessIncomingRoutingMessage(const RoutingMessage *m)
 	{
 	  cerr << *this << " Routing Message: "<<*m;
+	  
+	  
+	  
+	  RoutingMessage *rm = new RoutingMessage(m->getSrc(),m->getDst(),m->getLatency());
+	  SendToNeighbors(rm);
+	  
 	}
 
 	void Node::TimeOut()
