@@ -35,10 +35,24 @@ class Table {
 	
   map<unsigned, map<unsigned , std::tuple<double, unsigned> > > lsTable;
   
-  void updateRow(unsigned rowNum);
-  void updateEntry(unsigned entryNum);
-  map<unsigned , std::tuple<double, unsigned> >getRow(unsigned rowNum);
-  std::tuple<double,unsigned> getEntry(unsigned entryNum);
+  //table of links. each entry is the cost of the link from src to dest
+  map<unsigned ,map<unsigned , double> > linkTable;
+  
+  
+  //void setRow(unsigned rowNum, map<unsigned , std::tuple<double, unsigned> > newRow );
+  //void setEntry(unsigned rowNum, unsigned entryNum, std::tuple<double, unsigned> newEntry);
+  
+  //map<unsigned , std::tuple<double, unsigned> > getRow(unsigned rowNum);
+  //std::tuple<double,unsigned> getEntry(unsigned rowNum, unsigned entryNum);
+  
+  void setRow(unsigned rowNum, map<unsigned , double > newRow );
+  void setEntry(unsigned rowNum, unsigned entryNum, double newEntry);
+  
+  map<unsigned , double> getRow(unsigned rowNum);
+  double getEntry(unsigned rowNum, unsigned entryNum);
+  
+  
+  virtual map<unsigned, map<unsigned, double> > GetLinkTable() const;
  
   ostream & Print(ostream &os) const;
 };

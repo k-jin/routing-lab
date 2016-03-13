@@ -93,7 +93,7 @@ bool Node::Matches(const Node &rhs) const
 
   Node *Node::GetNextHop(const Node *destination) const
   {
-    return 0;
+    
   }
 
   Table *Node::GetRoutingTable() const
@@ -133,13 +133,141 @@ bool Node::Matches(const Node &rhs) const
 	Node *Node::GetNextHop(const Node *destination) const
 	{
 	  // WRITE
-	  return 0;
+	  //return 0;
+		Table table = *GetRoutingTable();
+		map<unsigned, map<unsigned ,double > > linkTable = table.GetLinkTable();
+		map<unsigned, map<unsigned , double > >::iterator tableIt = linkTable.begin();
+
+		
+		Node* returnNode = new Node(*this);
+
+		
+		unsigned destId = destination->GetNumber();
+
+		
+		unsigned srcId= *this->getNumber();
+		map<unsigned , double > srcRow= linkTable.getRow(*this->getNumber());
+		
+		if(srcId==destId){
+			return returnNode;
+		}
+		
+		//this is the number of nodes in the graph at this point
+		unsigned numNodes=linkTable.size();
+		
+		//initialize vectors with default values before we start djikstras
+		 map<unsigned, bool> visited ; //<node num, bool visited>
+		 map<unsigned, unsigned> preds; //<node num, node predecessor>
+		 map<unsigned, double> dists; //<node number, distance from src>
+		 
+		 //setting the values for the startig node
+		 visited[srcId]=true;
+		 pred[srcId]=-100;
+		 dists[srcId]=0;
+		 
+		 //start djikstras now
+		 
+		 //it->first is key, it->second is value
+		
+		//ok. so now we want to set the predecessors and the distance for all the nodes relative to the src
+		 
+		 map<unsigned, double> srcRow = linkTable->GetRow(srcId);
+		 //now we want to go through srcRow and set the costs relative to the src node
+		 // then we do setRow so that the table is updated
+		 
+		 for(map<unsigned, double>::iterator itr= srcRow.begin(); itr!=srcRow.end(); ++itr){
+			 //only do this if itr is a neigbour of src
+			 deque<Node*> srcNeighbours = *this->Node::GetNeighbours();
+			 
+			 for(std::deque<Node*>::iterator dit=srcNeighbours.begin();dit!=srcNeighbours().end();++dit){
+				 if(dit->getNumber()==itr->first)
+				 {
+					  dists[itr->first]=itr->second; //updating the distacne
+					  pred[itr->first]=srcId;  //settig the pred of all the elts in the srcRow to be the src itself
+				 }
+			 }
+			 
+			
+		 }
+		 
+		 
+		 for(map<unsigned, double>::iterator itr= dists.begin(); itr!=dists.end(); ++itr){
+			 //we want to go through all the nodes we have and then find the one with the lowest dist from src
+			 
+			 //we want to find the min of the priority queue
+			 
+			 unsigned minNumber;
+			 double minDist= (double) INT_MAX;
+			 
+			 for(map<unsigned, double>::iterator it2= dists.begin(); it2!=dists.end(); ++it2){\
+				if(minDist > it2->second && visited[it2->first]==false){
+					minNumber=it2->first;
+					minDist=it2->second;
+					
+				}
+				
+			 }
+			 //we have found the node with the min dist from u. now lets update the distances of its neighbours
+			 visited[minNumber]=true;
+			 
+			 //alt= dist[u] + length(u,v)
+			 
+			 //~ if(minDist<(double) INT_MAX){
+				 //~ udist=minDist;
+			 //~ }
+			 
+			 for(map<unsigned, double>::iterator it3=linkTable.getRow(minNumber).begin(); it3!=linkTable.getRow(minNumber).end(); ++it3){
+				 double altCost= it3->second + dists[minNumber];
+				 if(dists[it3->first] > altCost && visited[it3->first]==false){
+					 dists[it3->first]=altCost;
+					 pred[it3->first]= minNumber;
+				 }
+				 
+			 }
+			 
+			 
+			 
+			 
+		 }
+		 
+		 //finished the djikstras part
+		 
+		 // now we want to return the next hop. lol finally
+		 tempDestId=destId;
+		 unsigned secondLast = pred[destId];
+		 //we want to trace back to the src folowing the pred trail
+		 while(secondLast!=srcId){
+			 tempDestId=secondLast;
+			 secondLast=pred[tempDestId];
+		 }
+		 //tempDestId is now the next hop. woohoo
+		 
+		 deque<Node*> srcNeighbours2 = *this->Node::GetNeighbours();
+		 //iterate through the neighbours to find the Node with the matching Node Number
+		 //use Node.matches
+		 for(std::deque<Node*>::iterator dit3=srcNeighbours2.begin();dit3!=srcNeighbours2().end();++dit3){
+			 if(tempDestId==it3->GetNumber()){
+				return new Node(it3); 
+			 }
+			 
+		
+			 
+		 }
+		 
+		
+		
+		 return new Node();
+		
+		//finished alas!
+		
+		
+	  
 	}
 
 	Table *Node::GetRoutingTable() const
 	{
 	  // WRITE
-	  return 0;
+	  return new Table(routingTable);
 	}
 
 

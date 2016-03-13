@@ -25,6 +25,8 @@ class Node {
   Table routingTable;
 
 #if defined(LINKSTATE)
+
+
 #endif
 
 #if defined(DISTANCEVECTOR)

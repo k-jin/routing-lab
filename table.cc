@@ -11,18 +11,18 @@ ostream & Table::Print(ostream &os) const
 
 #if defined(LINKSTATE)
 
-	Table::Table(unsigned pN, map<unsigned, map<unsigned, double> > fT) : 
-	 lsTable(fT) {}
+	Table::Table(map<unsigned, map<unsigned, double> > lT) : 
+	 linkTable(lT) {}
 		
 	
 	Table::Table()
 	{
 		//parentNode = -1;
-		map<unsigned, map<unsigned , std::tuple<double, unsigned> > > lsTable;
+		//map<unsigned, map<unsigned , std::tuple<double, unsigned> > > lsTable;
 	}
 	
 	Table::Table(const Table &rhs) :
-		lsTable(rhs.forwardingTable) {}
+		linkTable(rhs.linkTable) {}
 		
 	Table & Table::operator=(const Table &rhs)
 	{
@@ -32,16 +32,26 @@ ostream & Table::Print(ostream &os) const
 	Table::~Table()
 	{}
 
- map<int , std::tuple<double, int> > Table::getRow(int rowNum){
-	 return lsTable[rowNum];
- }
+	 map<unsigned , double > Table::getRow(unsigned rowNum){
+		 return linkTable[rowNum];
+	 }
+	 
+	 Link Table::getEntry(unsigned rowNum, unsigned entryNum){
+		 return linkTable[rowNum][entryNum];
+	 }
  
- std::tuple<double, int> Table::getEntry(int entryNum){
-	 return lsTable[rowNum][entryNum];
- }
+	void setRow(unsigned rowNum, map<unsigned , double > newRow )
+	{
+		linkTable[rowNum]= newRow;
+	}
+	
+	void setEntry(unsigned rowNum, unsigned entryNum, double newEntry)
+	{
+		linkTable[rowNum][entryNum]=newEntry;
+	}
  
  
- 
+	map<unsigned, map<unsigned,double> > Table::GetLinkTable() const { return linkTable; }
  
 #endif
 
