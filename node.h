@@ -4,6 +4,7 @@
 #include <new>
 #include <iostream>
 #include <deque>
+#include <limits>
 
 
 class RoutingMessage;
@@ -21,11 +22,15 @@ class Node {
   SimulationContext    *context;
   double   bw;
   double   lat;
+  Table routingTable;
 
 #if defined(LINKSTATE)
+
+
 #endif
 
 #if defined(DISTANCEVECTOR)
+
 #endif
 
   // students will add protocol-specific data here

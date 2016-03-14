@@ -2,9 +2,13 @@
 #define _messages
 
 #include <iostream>
-
+#include <map>
+#include <vector>
+#include <set>
 #include "node.h"
 #include "link.h"
+
+using namespace std;
 
 #if defined(GENERIC)
 struct RoutingMessage {
@@ -16,9 +20,28 @@ struct RoutingMessage {
 #if defined(LINKSTATE)
 struct RoutingMessage {
 
+  unsigned src;
+  unsigned dst;
+  double latency;
+  
+  set<unsigned> seenNodeIds;
+  
   RoutingMessage();
+  RoutingMessage(unsigned s, unsigned d, unsigned l);
   RoutingMessage(const RoutingMessage &rhs);
   RoutingMessage &operator=(const RoutingMessage &rhs);
+  
+  void SetSeenNodeIds(set<unsigned> newSet);
+  void SetSrc(unsigned s);
+  void SetDst(unsigned d);
+  void SetLatency(unsigned l);
+  
+  set<unsigned> GetSeenNodeIds() const;
+  unsigned GetSrc() const;
+  unsigned GetDst() const;
+  unsigned GetLatency() const;
+  
+  
 
   ostream & Print(ostream &os) const;
 };
@@ -27,10 +50,15 @@ struct RoutingMessage {
 #if defined(DISTANCEVECTOR)
 struct RoutingMessage {
 
+  map<unsigned, double> body;
+
   RoutingMessage();
+  RoutingMessage(map<unsigned, double> b);
   RoutingMessage(const RoutingMessage &rhs);
   RoutingMessage &operator=(const RoutingMessage &rhs);
 
+  void SetBody(map<unsigned, double> body);
+  map<unsigned, double> GetBody() const;
   ostream & Print(ostream &os) const;
 };
 #endif
