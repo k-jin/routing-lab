@@ -14,6 +14,7 @@ ostream &RoutingMessage::Print(ostream &os) const
 
 ostream &RoutingMessage::Print(ostream &os) const
 {
+  os << "RM: S="<<src<<" D="<<dst<<" L="<<latency<<" "<<endl;	
   return os;
 }
 
@@ -24,13 +25,20 @@ RoutingMessage::RoutingMessage(unsigned s, unsigned d, unsigned l):src(s),dst(d)
 
 RoutingMessage::RoutingMessage(const RoutingMessage &rhs):src(rhs.src),dst(rhs.dst),latency(rhs.latency)
 {}
-  void SetSrc(unsigned src) {src=s;}
-  void SetDst(unsigned dst){dst=d;}
-  void SetLatency(unsigned latency){latency=l;}
+
+  void RoutingMessage::SetSeenNodeIds(set<unsigned> newIdSet){
+	  seenNodeIds=newIdSet;
+  }
+  void RoutingMessage::SetSrc(unsigned s) {src=s;}
+  void RoutingMessage::SetDst(unsigned d){dst=d;}
+  void RoutingMessage::SetLatency(unsigned l){latency=l;}
   
-  unsigned GetSrc() const {return src;}
-  unsigned GetDst() const {return dst;}
-  unsigned GetLatency() const {return latency;}
+  set<unsigned> RoutingMessage::GetSeenNodeIds() const{
+	  return seenNodeIds;
+  }
+  unsigned RoutingMessage::GetSrc() const {return src;}
+  unsigned RoutingMessage::GetDst() const {return dst;}
+  unsigned RoutingMessage::GetLatency() const {return latency;}
 
 #endif
 

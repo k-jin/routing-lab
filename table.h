@@ -22,29 +22,18 @@ class Table {
 #if defined(LINKSTATE)
 class Table {
   // Students should write this class
-  // each node needs a list to measure distances and predecessorss from other nodes
-  //so there will be NxN table. size is static
-  // thable updated at every step
-  //entry tuple is < double cost, int predecessor>
+  
+  map<unsigned ,map<unsigned , double> > linkTable;
  public:
- 
+  
   Table();
-  Table(unsigned numNodes);
+  
   Table(const Table &rhs);
+  Table(map<unsigned, map<unsigned, double> > lT);
   Table & operator=(const Table &rhs);
   virtual ~Table();
 	
-  //map<unsigned, map<unsigned , std::tuple<double, unsigned> > > lsTable;
   
-  //table of links. each entry is the cost of the link from src to dest
-  map<unsigned ,map<unsigned , double> > linkTable;
-  
-  
-  //void setRow(unsigned rowNum, map<unsigned , std::tuple<double, unsigned> > newRow );
-  //void setEntry(unsigned rowNum, unsigned entryNum, std::tuple<double, unsigned> newEntry);
-  
-  //map<unsigned , std::tuple<double, unsigned> > getRow(unsigned rowNum);
-  //std::tuple<double,unsigned> getEntry(unsigned rowNum, unsigned entryNum);
   
   void setRow(unsigned rowNum, map<unsigned , double > newRow );
   void setEntry(unsigned rowNum, unsigned entryNum, double newEntry);

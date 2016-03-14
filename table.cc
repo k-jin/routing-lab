@@ -17,8 +17,7 @@ ostream & Table::Print(ostream &os) const
 	
 	Table::Table()
 	{
-		//parentNode = -1;
-		//map<unsigned, map<unsigned , std::tuple<double, unsigned> > > lsTable;
+		map<unsigned ,map<unsigned , double> > linkTable;
 	}
 	
 	Table::Table(const Table &rhs) :
@@ -30,22 +29,24 @@ ostream & Table::Print(ostream &os) const
 	}
 	
 	Table::~Table()
-	{}
+	{
+		
+	}
 
 	 map<unsigned , double > Table::getRow(unsigned rowNum){
-		 return linkTable[rowNum];
+		 return GetLinkTable()[rowNum];
 	 }
 	 
-	 Link Table::getEntry(unsigned rowNum, unsigned entryNum){
-		 return linkTable[rowNum][entryNum];
+	 double Table::getEntry(unsigned rowNum, unsigned entryNum){
+		 return GetLinkTable()[rowNum][entryNum];
 	 }
  
-	void setRow(unsigned rowNum, map<unsigned , double > newRow )
+	void Table::setRow(unsigned rowNum, map<unsigned , double > newRow )
 	{
 		linkTable[rowNum]= newRow;
 	}
 	
-	void setEntry(unsigned rowNum, unsigned entryNum, double newEntry)
+	void Table::setEntry(unsigned rowNum, unsigned entryNum, double newEntry)
 	{
 		linkTable[rowNum][entryNum]=newEntry;
 	}

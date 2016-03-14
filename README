@@ -1,3 +1,32 @@
+Routing Lab
+EECS 340 Winter 2016
+
+Kevin Jin kqj094, Jaiveer Kothari jvk383
+
+Notes-
+
+Distance Vector:-
+The table class has field routingTable, which consists of a map<unsigned, map<unsigned, double> >. 
+The inner maps are distance vectors, where the index is the destination node and the value is 
+the minimum latency to the destination node. The outter map's index represents the source node
+and the value of the index is the source node's distance vector (the inner map). Every node has 
+a copy of the routingTable. Currently, our nodes are able to communicate and build their own tables
+correctly. However, GetNextHop works only on some occasions. 
+
+
+Link State:-
+The table class includes a field called the linkTable. Each node has a copy of the linkTable. The linkTable is a 2D table formed by
+a map of maps. The outermost map has key-value pairs such that the key is the node number (we call this the "from" node) and the value is a map of its neighbours.
+The inner map has key-value pairs such that the key is the "to" node number and the value is the latency of the link from the "from" node to the "to" node.
+The linkTable stores all the links in the topology. 
+In GetNextHop, we perform djikstas algorithm on these links to find the shortest path and return the next node on the current path.
+
+
+
+
+
+
+
 Routesim
 
 Simple event-driven simulator for link-state and distance vector routing.
