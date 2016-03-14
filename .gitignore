@@ -1,0 +1,5 @@
+*.o
+*.in
+*.out
+libroutelab.a
+routesim

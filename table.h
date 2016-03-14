@@ -27,19 +27,35 @@ class Table {
 #if defined(DISTANCEVECTOR)
 
 #include <deque>
-#include <vector>
+#include <map>
+
 
 class Table {
-	// index of outer vector would be indexed by neighbors and self
-	// index of inner vectors would be indexed by every node in the system
-	std::vector<vector<double>> routingTable;
+	// parent node of forwarding table
+	unsigned parentNode;
+	// index of outer map is row index, where index is the node id (unsigned)
+	// index of inner map is the destination node (unsigned) and the value is the distance (double)
+	map<unsigned, map<unsigned, double> > forwardingTable;
+	
  public:
+	Table();
+	Table(unsigned pN);
+	Table(unsigned pN, map<unsigned, map<unsigned, double> > fT);
+	Table(const Table &rhs);
+	Table & operator=(const Table &rhs);
+	virtual ~Table();
+	
+	// virtual bool RowMatches(const std::deque< std::tuple< int, double > > compare, const unsigned nodeId) const;
+	
 	ostream & Print(ostream &os) const;
-	virtual void initTable(int size);
-	virtual void SetRow(unsigned neighborNum, vector<double> row);
-	virtual vector<double> GetRow(unsigned neighborNum) const;
-	virtual void SetEntry(unsigned neighborNum, unsigned destNum, double distance);
-	virtual double GetEntry(unsigned neighborNum, unsigned destNum);
+	virtual void SetParentNode(unsigned nodeId);
+	virtual unsigned GetParentNode() const;
+	virtual void SetForwardingTable(map<unsigned, map<unsigned, double> > table);
+	virtual map<unsigned, map<unsigned, double> > GetForwardingTable() const;
+	virtual void SetRow(unsigned neighborId, map<unsigned, double> row);
+	virtual map<unsigned, double> GetRow(unsigned neighborId) const;
+	virtual void SetEntry(unsigned neighborId, unsigned destId, double distance);
+	virtual double GetEntry(unsigned neighborId, unsigned destId) const;
 };
 #endif
 
