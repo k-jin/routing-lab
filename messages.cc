@@ -47,19 +47,34 @@ RoutingMessage::RoutingMessage(const RoutingMessage &rhs):src(rhs.src),dst(rhs.d
 
 ostream &RoutingMessage::Print(ostream &os) const
 {
-  os << "Routing body message=" << body << endl;
+	os << "RoutingMsg SRC=" << src << endl << "RoutingMSG DST=" << dst << endl;
+  os << "DV for " << dv << endl;
+  map<unsigned, double> body = GetBody();
+  map<unsigned, double>::iterator bodyIt = body.begin();
+  for(; bodyIt != body.end(); ++bodyIt){
+  	unsigned currDest = bodyIt->first;
+  	double currDist = bodyIt->second;
+  	os << "dest=" << currDest << "/dist=" << currDist << "\t";
+  }
   return os;
-}
+}	
 
 RoutingMessage::RoutingMessage()
 {}
 
-RoutingMessage::RoutingMessage(map<unsigned, double> b) : body(b) {}
+RoutingMessage::RoutingMessage(const unsigned s, const unsigned d, const unsigned dvr, const map<unsigned, double> b) : src(s), dst(d), dv(dvr), body(b) {}
 
-RoutingMessage::RoutingMessage(const RoutingMessage &rhs)
+RoutingMessage::RoutingMessage(const RoutingMessage &rhs) //: src(rhs.src), dst(rhs.dst), dv(rhs.dv), body(rhs.body)
 {}
 
+void RoutingMessage::SetSrc(unsigned s) {src = s;}
+unsigned RoutingMessage::GetSrc() const {return src; }
+void RoutingMessage::SetDst(unsigned d) {dst = d;}
+unsigned RoutingMessage::GetDst() const {return dst;}
+void RoutingMessage::SetDv(unsigned d) {dv = d;}
+unsigned RoutingMessage::GetDv() const {return dv; }
 void RoutingMessage::SetBody(map<unsigned, double> b) { body = b; }
 map<unsigned, double> RoutingMessage::GetBody() const { return body; }
+
 
 #endif
