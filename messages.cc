@@ -38,7 +38,7 @@ ostream &RoutingMessage::Print(ostream &os) const
   for(; bodyIt != body.end(); ++bodyIt){
   	unsigned currDest = bodyIt->first;
   	double currDist = bodyIt->second;
-  	os << "Destination node=" << currDest << "/Distance=" << currDist << endl;
+  	os << "dest=" << currDest << "/dist=" << currDist << "\t";
   }
   return os;
 }	

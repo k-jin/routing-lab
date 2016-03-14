@@ -64,7 +64,7 @@ ostream & Table::Print(ostream &os) const
 			for(; entryIt != currRow.end(); ++entryIt){
 				unsigned currDest = entryIt->first;
 				double currDist = entryIt->second;
-				os << "Destination node: " << currDest << "/Distance: " << currDist << "\t";
+				os << "dest=" << currDest << "/dist=" << currDist << "\t";
 			}
 			os << endl;
 		}
