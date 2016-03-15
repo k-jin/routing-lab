@@ -319,8 +319,8 @@ Node::Node(const unsigned n, SimulationContext *c, double b, double l) :
 Node::Node(const unsigned n, SimulationContext *c, double b, double l) : 
     number(n), context(c), bw(b), lat(l) 
 {
-  routingTable.setEntry(n,n,0);
-  routingTable.setParentNode(n);
+  routingTable.SetEntry(n,n,0);
+  routingTable.SetParentNode(n);
 }
 
 void Node::LinkHasBeenUpdated(const Link *l)
