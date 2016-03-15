@@ -11,6 +11,49 @@ ostream & Table::Print(ostream &os) const
 
 #if defined(LINKSTATE)
 
+	Table::Table(map<unsigned, map<unsigned, double> > lT) : 
+	 linkTable(lT) {}
+		
+	
+	Table::Table()
+	{
+		map<unsigned ,map<unsigned , double> > linkTable;
+	}
+	
+	Table::Table(const Table &rhs) :
+		linkTable(rhs.linkTable) {}
+		
+	Table & Table::operator=(const Table &rhs)
+	{
+		return *(new (this) Table(rhs));
+	}
+	
+	Table::~Table()
+	{
+		
+	}
+
+	 map<unsigned , double > Table::getRow(unsigned rowNum){
+		 return GetLinkTable()[rowNum];
+	 }
+	 
+	 double Table::getEntry(unsigned rowNum, unsigned entryNum){
+		 return GetLinkTable()[rowNum][entryNum];
+	 }
+ 
+	void Table::setRow(unsigned rowNum, map<unsigned , double > newRow )
+	{
+		linkTable[rowNum]= newRow;
+	}
+	
+	void Table::setEntry(unsigned rowNum, unsigned entryNum, double newEntry)
+	{
+		linkTable[rowNum][entryNum]=newEntry;
+	}
+ 
+ 
+	map<unsigned, map<unsigned,double> > Table::GetLinkTable() const { return linkTable; }
+ 
 #endif
 
 #if defined(DISTANCEVECTOR)

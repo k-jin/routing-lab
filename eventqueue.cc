@@ -11,8 +11,6 @@ Event * EventQueue::GetEarliestEvent() {
     Event *e=q.top();
     q.pop();
     curtime=e->GetTimeStamp();
-    cerr << "CURRENT TIME: " << curtime << endl;
-    //cerr << "POPPED EVENT: " << *e << endl;
     return e;
   } else {
     return 0;

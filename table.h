@@ -3,6 +3,8 @@
 
 
 #include <iostream>
+#include <map>
+//#include <tuple>
 
 using namespace std;
 
@@ -12,6 +14,7 @@ class Table {
 
  public:
   ostream & Print(ostream &os) const;
+  
 };
 #endif
 
@@ -19,7 +22,28 @@ class Table {
 #if defined(LINKSTATE)
 class Table {
   // Students should write this class
+  
+  map<unsigned ,map<unsigned , double> > linkTable;
  public:
+  
+  Table();
+  
+  Table(const Table &rhs);
+  Table(map<unsigned, map<unsigned, double> > lT);
+  Table & operator=(const Table &rhs);
+  virtual ~Table();
+	
+  
+  
+  void setRow(unsigned rowNum, map<unsigned , double > newRow );
+  void setEntry(unsigned rowNum, unsigned entryNum, double newEntry);
+  
+  map<unsigned , double> getRow(unsigned rowNum);
+  double getEntry(unsigned rowNum, unsigned entryNum);
+  
+  
+  virtual map<unsigned, map<unsigned, double> > GetLinkTable() const;
+ 
   ostream & Print(ostream &os) const;
 };
 #endif
@@ -50,6 +74,7 @@ class Table {
 	ostream & Print(ostream &os) const;
 	virtual void SetParentNode(unsigned nodeId);
 	virtual unsigned GetParentNode() const;
+
 	virtual void SetForwardingTable(map<unsigned, map<unsigned, double> > table);
 	virtual map<unsigned, map<unsigned, double> > GetForwardingTable() const;
 	virtual void SetRow(unsigned neighborId, map<unsigned, double> row);
