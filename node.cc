@@ -9,8 +9,8 @@
 Node::Node(const unsigned n, SimulationContext *c, double b, double l) : 
     number(n), context(c), bw(b), lat(l) 
 {
-	routingTable.SetEntry(n,n,0);
-	routingTable.SetParentNode(n);
+  routingTable.SetEntry(n,n,0);
+  routingTable.SetParentNode(n);
 }
 
 Node::Node() 
@@ -311,13 +311,7 @@ bool Node::Matches(const Node &rhs) const
 
 
 #if defined(DISTANCEVECTOR)
-
-
-
-	
-
-
-  void Node::LinkHasBeenUpdated(const Link *l)
+void Node::LinkHasBeenUpdated(const Link *l)
   {
     // update our table
     // send out routing mesages
@@ -342,13 +336,13 @@ bool Node::Matches(const Node &rhs) const
     double minDist2Dest = nodeDv[destId];
     map<unsigned, map<unsigned, double> >::iterator it = forwardingTable.begin();
     for(; it != forwardingTable.end(); ++it) {
-    	unsigned neighborId = it->first;
-    	if(neighborId != nodeId) {
-				map<unsigned, double> currDv = it->second;
-				if(nodeDv.count(neighborId) == 0) { nodeDv[neighborId] = numeric_limits<double>::infinity(); }
-				if(currDv.count(destId) == 0) { currDv[destId] = numeric_limits<double>::infinity(); }
-				minDist2Dest = min(minDist2Dest, nodeDv[neighborId] + currDv[destId]);
-    	}
+      unsigned neighborId = it->first;
+      if(neighborId != nodeId) {
+        map<unsigned, double> currDv = it->second;
+        if(nodeDv.count(neighborId) == 0) { nodeDv[neighborId] = numeric_limits<double>::infinity(); }
+        if(currDv.count(destId) == 0) { currDv[destId] = numeric_limits<double>::infinity(); }
+        minDist2Dest = min(minDist2Dest, nodeDv[neighborId] + currDv[destId]);
+      }
     }
     nodeDv[destId] = minDist2Dest;
     
@@ -363,13 +357,13 @@ bool Node::Matches(const Node &rhs) const
       double minDist2Dest1 = minDist;
       it = forwardingTable.begin();
       for(; it != forwardingTable.end(); ++it) {
-      	unsigned neighborId = it->first;
-      	if(neighborId != nodeId) {
-  				map<unsigned, double> currDv = it->second;
-  				if(nodeDv.count(neighborId) == 0) { nodeDv[neighborId] = numeric_limits<double>::infinity(); }
-  				if(currDv.count(destId) == 0) { currDv[destId] = numeric_limits<double>::infinity(); }
-  				minDist2Dest1 = min(minDist2Dest1, nodeDv[neighborId] + currDv[destId]);
-      	}
+        unsigned neighborId = it->first;
+        if(neighborId != nodeId) {
+          map<unsigned, double> currDv = it->second;
+          if(nodeDv.count(neighborId) == 0) { nodeDv[neighborId] = numeric_limits<double>::infinity(); }
+          if(currDv.count(destId) == 0) { currDv[destId] = numeric_limits<double>::infinity(); }
+          minDist2Dest1 = min(minDist2Dest1, nodeDv[neighborId] + currDv[destId]);
+        }
       }
       nodeDv[currDest] = minDist2Dest1;
       
@@ -378,36 +372,36 @@ bool Node::Matches(const Node &rhs) const
 //    PrintRow(nodeDv);
 //    cerr << "neighborDv=";
 //    PrintRow(neighborDv);
-    	this->routingTable.SetRow(nodeId, nodeDv);
-    	this->routingTable.SetRow(destId, neighborDv);
+      this->routingTable.SetRow(nodeId, nodeDv);
+      this->routingTable.SetRow(destId, neighborDv);
     
-			RoutingMessage* msg = new RoutingMessage();
-			msg->SetSrc(nodeId);
-			msg->SetDv(nodeId);
-			//msg->SetDst(currNeighbor.GetNumber());
-			msg->SetBody(nodeDv);
-//			cerr << "Sending own DV: " << *msg << endl;
-			SendToNeighbors(msg);
+      RoutingMessage* msg = new RoutingMessage();
+      msg->SetSrc(nodeId);
+      msg->SetDv(nodeId);
+      //msg->SetDst(currNeighbor.GetNumber());
+      msg->SetBody(nodeDv);
+//      cerr << "Sending own DV: " << *msg << endl;
+      SendToNeighbors(msg);
 
     
     //if(this->GetNumber() == 1) {
-    	//cerr << "FOR NODE: " << nodeId << endl << *GetRoutingTable() <<endl;	
+      //cerr << "FOR NODE: " << nodeId << endl << *GetRoutingTable() <<endl;  
 //    }
   }
 
 
   void Node::ProcessIncomingRoutingMessage(const RoutingMessage *m)
   {
-  	bool printErr = false;
-  	//if(this->GetNumber() == 0) {printErr = true;}
+    bool printErr = false;
+    //if(this->GetNumber() == 0) {printErr = true;}
 
       // Copy of routing table
       Table* table = GetRoutingTable();
       if (printErr){
-      	cerr << "Table before: " << *table << endl;
-      	cerr << "INCOMING MSG: " << *m << endl;
+        cerr << "Table before: " << *table << endl;
+        cerr << "INCOMING MSG: " << *m << endl;
       }
-      		
+          
       // Get neighbors of current node and init iterator
       deque<Node*> neighbors = *this->GetNeighbors();
       deque<Node*>::iterator neighborsIt = neighbors.begin();
@@ -428,9 +422,9 @@ bool Node::Matches(const Node &rhs) const
       // Update table with new DV for node srcId
       //this->routingTable.SetRow(mId, newDv);
       for(; newDvIt != newDv.end(); ++newDvIt) {
-      	unsigned id = newDvIt->first;
-      	double dist = newDvIt->second;
-      	this->routingTable.SetEntry(mId, id, dist);
+        unsigned id = newDvIt->first;
+        double dist = newDvIt->second;
+        this->routingTable.SetEntry(mId, id, dist);
       }
       
       newDvIt = newDv.begin();
@@ -441,41 +435,41 @@ bool Node::Matches(const Node &rhs) const
 //        if(nodeDv.count(currDestId) == 0){nodeDv[currDestId] == numeric_limits<double>::infinity(); }
         
         if(nodeDv.count(newDestId) == 0){
-        	nodeDv[newDestId] = numeric_limits<double>::infinity();
+          nodeDv[newDestId] = numeric_limits<double>::infinity();
           updated = true;
         } //else{
-      	if(printErr) { cerr << "ORIGINAL NODEDV[newDestId] " << nodeDv[newDestId]<< endl;}
+        if(printErr) { cerr << "ORIGINAL NODEDV[newDestId] " << nodeDv[newDestId]<< endl;}
 
         if(table->GetEntry(nodeId, mId) + table->GetEntry(mId, newDestId) == nodeDv[newDestId]) {
-        	
-        	double checkDistance = nodeDv[newDestId];
-        	unsigned shortestCounter = 0;
-        	map<unsigned, double> origNodeDv = table->GetRow(nodeId);
-        	map<unsigned, map<unsigned, double> >::iterator rowIt= table->GetForwardingTable().begin();
-        	for(; rowIt != table->GetForwardingTable().end(); ++rowIt) {
-        		unsigned currneighbor = rowIt->first;
-        		if(currneighbor != nodeId){
-        			map<unsigned, double> currdv = rowIt->second;
-          		if(currdv[newDestId] + origNodeDv[currneighbor] == checkDistance) {shortestCounter++;}
+          
+          double checkDistance = nodeDv[newDestId];
+          unsigned shortestCounter = 0;
+          map<unsigned, double> origNodeDv = table->GetRow(nodeId);
+          map<unsigned, map<unsigned, double> >::iterator rowIt= table->GetForwardingTable().begin();
+          for(; rowIt != table->GetForwardingTable().end(); ++rowIt) {
+            unsigned currneighbor = rowIt->first;
+            if(currneighbor != nodeId){
+              map<unsigned, double> currdv = rowIt->second;
+              if(currdv[newDestId] + origNodeDv[currneighbor] == checkDistance) {shortestCounter++;}
 
-        		}
-        	}
-        	if(printErr) {cerr << shortestCounter << endl;}
-        	if(shortestCounter < 1) {
-        		if(printErr) {cerr << "route 1" << endl;}
-        		nodeDv[newDestId] = nodeDv[mId] + newDistance;
-        	} else {
-        		if(printErr) {cerr << "route 2" << endl;}
+            }
+          }
+          if(printErr) {cerr << shortestCounter << endl;}
+          if(shortestCounter < 1) {
+            if(printErr) {cerr << "route 1" << endl;}
+            nodeDv[newDestId] = nodeDv[mId] + newDistance;
+          } else {
+            if(printErr) {cerr << "route 2" << endl;}
             nodeDv[newDestId] = min(nodeDv[newDestId], nodeDv[mId] + newDistance);
-        	}
+          }
         }else {
-      		if(printErr) {cerr << "route 3" << endl;}
+          if(printErr) {cerr << "route 3" << endl;}
           nodeDv[newDestId] = min(nodeDv[newDestId], nodeDv[mId] + newDistance);
-      	}
+        }
         if(printErr) { cerr << "NEW NODEDV[newDestId]" << nodeDv[newDestId] << endl;}
         if (table->GetEntry(nodeId, newDestId) != nodeDv[newDestId]){
-        	if(printErr) { cerr << "TRUEEE" << endl;}
-        	updated = true;
+          if(printErr) { cerr << "TRUEEE" << endl;}
+          updated = true;
         }
 //      }
         
@@ -483,18 +477,17 @@ bool Node::Matches(const Node &rhs) const
       if(printErr) {PrintRow(nodeDv);}
       
       if(updated){
-      	this->routingTable.SetRow(nodeId, nodeDv);
-        RoutingMessage* rm = new RoutingMessage(nodeId, nodeId, nodeId, nodeDv);
-					RoutingMessage* msg = new RoutingMessage();
-					msg->SetSrc(nodeId);
-					msg->SetDv(nodeId);
+        this->routingTable.SetRow(nodeId, nodeDv);
+          RoutingMessage* msg = new RoutingMessage();
+          msg->SetSrc(nodeId);
+          msg->SetDv(nodeId);
 //            msg->SetDst(currNeighbor.GetNumber());
-					msg->SetBody(nodeDv);
+          msg->SetBody(nodeDv);
 //            cerr << "Sending updated dv: " << *msg << endl;
-					SendToNeighbors(msg);
+          SendToNeighbors(msg);
       }
       if(printErr){
-      	cerr << "After updated msg: " << *GetRoutingTable() << endl;	
+        cerr << "After updated msg: " << *GetRoutingTable() << endl;  
       }
 //    }
   }
@@ -507,7 +500,6 @@ bool Node::Matches(const Node &rhs) const
 
   Node *Node::GetNextHop(const Node *destination) const
   {
-//  	cerr << "here?" << endl;
     Table table = *GetRoutingTable();
 //    cerr << "NODE: " << this->GetNumber() << endl;
     cerr << table << endl;
@@ -561,7 +553,6 @@ bool Node::Matches(const Node &rhs) const
           double totalDist = neighborDist + currDistance;
           if (totalDist == minDist) {
             returnNode->SetNumber(currNeighbor);
-//          	cerr << "Not neighbor: " << *returnNode << endl;
             return returnNode;
           }
         }
@@ -583,20 +574,20 @@ bool Node::Matches(const Node &rhs) const
   }
 
   void Node::PrintRow(map<unsigned, double> row) {
-  	for(map<unsigned, double>::iterator it = row.begin(); it != row.end(); ++it) {
-  		unsigned id = it->first;
-  		double dist = it->second;
-  		cerr << "\t node=" << id << ",dist=" << dist << endl;
-  	}
+    for(map<unsigned, double>::iterator it = row.begin(); it != row.end(); ++it) {
+      unsigned id = it->first;
+      double dist = it->second;
+      cerr << "\t node=" << id << ",dist=" << dist << endl;
+    }
   }
 
   void Node::PrintTable(map<unsigned, map<unsigned, double> > table) {
-  	for(map<unsigned, map<unsigned, double> >::iterator it = table.begin(); it != table.end(); ++it){
-  		unsigned id = it->first;
-  		map<unsigned, double> row = it->second;
-  		cerr << "DV of node=" << id << endl;
-  		PrintRow(row);
-  	}
+    for(map<unsigned, map<unsigned, double> >::iterator it = table.begin(); it != table.end(); ++it){
+      unsigned id = it->first;
+      map<unsigned, double> row = it->second;
+      cerr << "DV of node=" << id << endl;
+      PrintRow(row);
+    }
   }
 
   ostream & Node::Print(ostream &os) const
@@ -604,4 +595,5 @@ bool Node::Matches(const Node &rhs) const
     os << "Node(number="<<number<<", lat="<<lat<<", bw="<<bw;
     return os;
 }
+
 #endif
