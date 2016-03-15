@@ -67,8 +67,6 @@ virtual void PrintRow(map<unsigned, double> row);
   virtual Node *GetNextHop(const Node *destination) const;
   virtual Table *GetRoutingTable() const;
 
-  virtual void PrintTable(map< unsigned, map<unsigned, double> > table);
-  virtual void PrintRow(map<unsigned, double> row);
 
   virtual ostream & Print(ostream &os) const;
 

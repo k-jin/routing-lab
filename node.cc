@@ -6,12 +6,6 @@
 
 
 
-Node::Node(const unsigned n, SimulationContext *c, double b, double l) : 
-    number(n), context(c), bw(b), lat(l) 
-{
-  routingTable.SetEntry(n,n,0);
-  routingTable.SetParentNode(n);
-}
 
 Node::Node() 
 { throw GeneralException(); }
@@ -78,6 +72,10 @@ bool Node::Matches(const Node &rhs) const
 
 #if defined(GENERIC)
 
+Node::Node(const unsigned n, SimulationContext *c, double b, double l) : 
+    number(n), context(c), bw(b), lat(l) 
+{
+}
 
   void Node::LinkHasBeenUpdated(const Link *l)
   {
@@ -118,6 +116,12 @@ bool Node::Matches(const Node &rhs) const
 #endif
 
 #if defined(LINKSTATE)
+
+
+Node::Node(const unsigned n, SimulationContext *c, double b, double l) : 
+    number(n), context(c), bw(b), lat(l) 
+{
+}
 
 
 
@@ -292,7 +296,7 @@ bool Node::Matches(const Node &rhs) const
 		 }	
 		 returnNode->SetNumber(tempDestId);
 		 return returnNode;		
-		
+		}		
 
 	Table *Node::GetRoutingTable() const
 	{
@@ -311,6 +315,14 @@ bool Node::Matches(const Node &rhs) const
 
 
 #if defined(DISTANCEVECTOR)
+
+Node::Node(const unsigned n, SimulationContext *c, double b, double l) : 
+    number(n), context(c), bw(b), lat(l) 
+{
+  routingTable.setEntry(n,n,0);
+  routingTable.setParentNode(n);
+}
+
 void Node::LinkHasBeenUpdated(const Link *l)
   {
     // update our table
